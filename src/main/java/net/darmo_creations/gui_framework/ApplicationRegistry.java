@@ -16,32 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.darmo_creations.gui_framework.config;
+package net.darmo_creations.gui_framework;
+
+import net.darmo_creations.utils.events.EventsBus;
 
 /**
- * This type of keys is associated with boolean values.
+ * An application must register itself to this registry to be started. Only one application can be
+ * registered.
  *
  * @author Damien Vergnet
  */
-public final class BooleanConfigKey extends ConfigKey<Boolean> {
-  public BooleanConfigKey(String name) {
-    super(name, Boolean.class);
+public final class ApplicationRegistry {
+  /** Application's main event bus */
+  public static final EventsBus EVENTS_BUS = new EventsBus();
+
+  private static Application application;
+
+  /**
+   * Registers the application.
+   * 
+   * @param application
+   */
+  public static void registerApplication(Application app) {
+    application = app;
   }
 
-  @Override
-  public String serializeValueGeneric(Boolean value) {
-    return "" + value;
+  /**
+   * @return the registered application
+   */
+  public static Application getApplication() {
+    return application;
   }
 
-  @Override
-  public Boolean deserializeValue(String value) {
-    switch (value) {
-      case "true":
-        return true;
-      case "false":
-        return false;
-      default:
-        return null;
-    }
-  }
+  private ApplicationRegistry() {}
 }

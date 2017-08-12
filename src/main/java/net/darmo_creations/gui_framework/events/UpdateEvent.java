@@ -19,6 +19,7 @@
 package net.darmo_creations.gui_framework.events;
 
 import net.darmo_creations.utils.events.AbstractEvent;
+import net.darmo_creations.utils.version.Version;
 
 /**
  * Base class for all update related events.

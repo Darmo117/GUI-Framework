@@ -1,7 +1,7 @@
 /*
  * Copyright © 2017 Damien Vergnet
  * 
- * This file is part of GUI-Framework.
+ * This file is part of Jenealogio.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,32 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.darmo_creations.gui_framework.config;
+package net.darmo_creations.gui_framework.util;
+
+import javax.swing.ImageIcon;
 
 /**
- * This type of keys is associated with boolean values.
- *
+ * This class holds all images for the app and provides a method to copy images.
+ * 
  * @author Damien Vergnet
  */
-public final class BooleanConfigKey extends ConfigKey<Boolean> {
-  public BooleanConfigKey(String name) {
-    super(name, Boolean.class);
+public final class ImagesUtil {
+  public static final ImageIcon HELP = getIcon("/assets/icons/help.png");
+  public static final ImageIcon UPDATE_CHECK_FAILED = getIcon("/assets/icons/update_check_failed.png");
+  public static final ImageIcon CHECKING_UPDATES = getIcon("/assets/icons/checking_updates.png");
+  public static final ImageIcon NEW_UPDATE = getIcon("/assets/icons/new_update.png");
+
+  public static ImageIcon getIcon(String path) {
+    return new ImageIcon(ImagesUtil.class.getResource(path));
   }
 
-  @Override
-  public String serializeValueGeneric(Boolean value) {
-    return "" + value;
-  }
-
-  @Override
-  public Boolean deserializeValue(String value) {
-    switch (value) {
-      case "true":
-        return true;
-      case "false":
-        return false;
-      default:
-        return null;
-    }
-  }
+  private ImagesUtil() {}
 }

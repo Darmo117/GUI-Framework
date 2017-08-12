@@ -18,39 +18,69 @@
  */
 package net.darmo_creations.gui_framework.config;
 
-import java.awt.Color;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
- * This class contains the global configuration for the app.
+ * This class is a default implementation for a config object.
  *
  * @author Damien Vergnet
  */
-public class GlobalConfig implements Cloneable {
+public class DefaultGlobalConfig implements Cloneable {
+  private static final Map<ConfigKey<?>, Object> DEFAULT_VALUES = new HashMap<>();
+
+  /**
+   * Registers a key and its default value. Values should be unmuttable to avoid side effects.
+   * 
+   * @param key the key
+   * @param defaultValue its default value
+   */
+  public static <T> void registerKey(ConfigKey<T> key, T defaultValue) {
+    DEFAULT_VALUES.put(key, DEFAULT_VALUES);
+  }
+
+  /**
+   * @return all registered keys
+   */
+  public static Set<ConfigKey<?>> getRegisteredKeys() {
+    return new HashSet<>(DEFAULT_VALUES.keySet());
+  }
+
+  /**
+   * 
+   * @param name
+   * @param type
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends ConfigKey<?>> Optional<T> getKeyFromName(String name, Class<T> type) {
+    return (Optional<T>) DEFAULT_VALUES.keySet().stream().filter(k -> k.getClass() == type).findFirst();
+  }
+
+  /**
+   * 
+   * @param key
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> T getDefaultValue(ConfigKey<T> key) {
+    return key == null ? null : (T) DEFAULT_VALUES.get(key);
+  }
+
   private Language language;
   private Map<ConfigKey<?>, Object> map;
 
   /**
    * Creates a config with default values for all properties.
    */
-  public GlobalConfig() {
-    setLanguage(Language.ENGLISH);
-    this.map = new HashMap<>();
-    setValue(ColorConfigKey.CARD_BORDER, Color.GRAY);
-    setValue(ColorConfigKey.CARD_SELECTED_BORDER, Color.BLUE);
-    setValue(ColorConfigKey.CARD_SELECTED_BACKGROUND_BORDER, Color.BLACK);
-    setValue(ColorConfigKey.GENDER_UNKNOWN, Color.GRAY);
-    setValue(ColorConfigKey.GENDER_MALE, new Color(117, 191, 255));
-    setValue(ColorConfigKey.GENDER_FEMALE, new Color(37, 177, 19));
-    setValue(ColorConfigKey.LINK, Color.BLACK);
-    setValue(ColorConfigKey.LINK_CHILD, Color.BLUE);
-    setValue(ColorConfigKey.LINK_HOVERED, Color.RED);
-    setValue(ColorConfigKey.LINK_SELECTED, Color.GREEN);
-    setValue(ColorConfigKey.SELECTION_BORDER, new Color(0, 120, 215, 128));
-    setValue(ColorConfigKey.SELECTION_BACKGROUND, new Color(185, 213, 241, 128));
-    setValue(BooleanConfigKey.CHECK_UPDATES, true);
+  public DefaultGlobalConfig() {
+    setLanguage(Language.getDefault());
+    this.map = new HashMap<>(DEFAULT_VALUES);
+    setValue(DefaultConfigKeys.CHECK_UPDATES, true);
   }
 
   /**
@@ -86,8 +116,11 @@ public class GlobalConfig implements Cloneable {
    * 
    * @param key the key
    * @param value the associated value
+   * @throws ClassCastException if the value is not null and not of type T
    */
-  public <T> void setValue(ConfigKey<T> key, T value) {
+  public <T> void setValue(ConfigKey<T> key, Object value) {
+    if (value != null && key.getClass() != value.getClass())
+      throw new ClassCastException("");
     this.map.put(key, value);
   }
 
@@ -96,9 +129,9 @@ public class GlobalConfig implements Cloneable {
    * copy of the current one.
    */
   @Override
-  public GlobalConfig clone() {
+  public DefaultGlobalConfig clone() {
     try {
-      GlobalConfig config = (GlobalConfig) super.clone();
+      DefaultGlobalConfig config = (DefaultGlobalConfig) super.clone();
       config.map = new HashMap<>(this.map);
       return config;
     }

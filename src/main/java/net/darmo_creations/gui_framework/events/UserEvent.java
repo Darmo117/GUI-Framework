@@ -44,31 +44,27 @@ public final class UserEvent extends AbstractEvent {
     return this.type;
   }
 
+  public interface Type {}
+
   /**
-   * Event type.
+   * Default event types.
    *
    * @author Damien Vergnet
    */
-  public static enum Type {
-    NEW,
-    EDIT_TREE,
-    OPEN,
-    SAVE,
-    SAVE_AS,
-    UNDO,
-    REDO,
-    ADD_CARD,
-    ADD_LINK,
-    EDIT_CARD,
-    EDIT_LINK,
-    DELETE_CARD,
-    DELETE_LINK,
-    EDIT_COLORS,
+  public static enum DefaultType implements Type {
+    /** The help has been invoked. */
     HELP,
+    /** The about dialog has been invoked. */
     ABOUT,
+    /** The application is exiting (fired before {@link #EXIT}). */
+    EXITING,
+    /**
+     * The application will exit right after the event is accepted (fired after {@link #EXITING}).
+     */
     EXIT,
+    /** The update dialog has been invoked. */
     OPEN_UPDATE,
-    TOGGLE_CHECK_UPDATES,
-    EXPORT_IMAGE;
+    /** Updates checking has been toggled. */
+    TOGGLE_CHECK_UPDATES;
   }
 }

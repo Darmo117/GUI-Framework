@@ -46,8 +46,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import net.darmo_creations.gui_framework.events.EventsDispatcher;
+import net.darmo_creations.gui_framework.Application;
+import net.darmo_creations.gui_framework.ApplicationRegistry;
 import net.darmo_creations.gui_framework.events.UpdateEvent;
+import net.darmo_creations.utils.events.EventsBus;
+import net.darmo_creations.utils.version.Version;
 
 /**
  * This class checks if a newer version is available online.
@@ -97,8 +100,11 @@ public final class UpdatesChecker {
    * Checks if an update is available.
    */
   public void checkUpdate() {
+    Application application = ApplicationRegistry.getApplication();
+    EventsBus bus = ApplicationRegistry.EVENTS_BUS;
+
     UpdateEvent.Checking event = new UpdateEvent.Checking();
-    EventsDispatcher.EVENT_BUS.dispatchEvent(event);
+    bus.dispatchEvent(event);
 
     if (event.isCanceled()) {
       return;
@@ -110,7 +116,7 @@ public final class UpdatesChecker {
       boolean noUpdate = false;
 
       try {
-        URL oracle = new URL("https://github.com/Darmo117/Jenealogio/releases.atom");
+        URL oracle = new URL(application.getRssUpdatesLink());
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(oracle.openStream()))) {
           StringJoiner joiner = new StringJoiner("\n");
@@ -147,7 +153,7 @@ public final class UpdatesChecker {
               if (!versions.isEmpty()) {
                 Version lastVersion = versions.lastKey();
 
-                if (lastVersion.after(Version.CURRENT_VERSION)) {
+                if (lastVersion.after(application.getCurrentVersion())) {
                   String[] data = versions.get(lastVersion);
 
                   this.version = lastVersion;
@@ -178,13 +184,13 @@ public final class UpdatesChecker {
 
       if (error) {
         reset();
-        EventsDispatcher.EVENT_BUS.dispatchEvent(new UpdateEvent.CheckFailed(errorMsg));
+        bus.dispatchEvent(new UpdateEvent.CheckFailed(errorMsg));
       }
       else if (noUpdate) {
-        EventsDispatcher.EVENT_BUS.dispatchEvent(new UpdateEvent.NoUpdate());
+        bus.dispatchEvent(new UpdateEvent.NoUpdate());
       }
       else if (this.updateAvailable) {
-        EventsDispatcher.EVENT_BUS.dispatchEvent(new UpdateEvent.NewUpdate(getVersion(), getLink(), getChangelog()));
+        bus.dispatchEvent(new UpdateEvent.NewUpdate(getVersion(), getLink(), getChangelog()));
       }
     };
     new Thread(r).start();

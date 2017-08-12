@@ -18,34 +18,44 @@
  */
 package net.darmo_creations.gui_framework;
 
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import net.darmo_creations.gui_framework.config.GlobalConfig;
+import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
 import net.darmo_creations.gui_framework.dao.ConfigDao;
-import net.darmo_creations.gui_framework.gui.MainFrame;
+import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.utils.I18n;
 
 /**
- * Application's main class.
+ * Application's main class. The main method from the application must call start() after it has
+ * been registered to the {@code ApplicationRegistry}.
  *
  * @author Damien Vergnet
  */
 public class Start {
-  public static final boolean DEBUG = true;
+  public static void run() {
+    Application application = ApplicationRegistry.getApplication();
+    DefaultGlobalConfig config = ConfigDao.getInstance().load();
 
-  public static void main(String[] args) {
-    GlobalConfig config = ConfigDao.getInstance().load();
-    I18n.init(config.getLanguage().getLocale());
+    try {
+      I18n.init(application.getLanguageFilesStream(config.getLanguage()));
+    }
+    catch (IOException ex) {
+      JOptionPane.showMessageDialog(null, "Could not load language file!", "Error", JOptionPane.ERROR_MESSAGE);
+      System.exit(1);
+    }
 
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
-    catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException __) {
+    catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
       JOptionPane.showMessageDialog(null, I18n.getLocalizedString("popup.laf_error.text"), I18n.getLocalizedString("popup.laf_error.title"),
           JOptionPane.ERROR_MESSAGE);
     }
-    new MainFrame(config).setVisible(true);
+    ApplicationFrame frame = application.initFrame(config);
+    frame.setVisible(true);
   }
 }

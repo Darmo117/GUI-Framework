@@ -18,35 +18,18 @@
  */
 package net.darmo_creations.gui_framework.config;
 
-import java.awt.Color;
-
 /**
- * This type of keys is associated with the {@code Color} class.
+ * This class provides config keys used by the framework.
  *
  * @author Damien Vergnet
  */
-public enum ColorConfigKey implements ConfigKey<Color> {
-  CARD_BORDER("card_border"),
-  CARD_SELECTED_BORDER("card_selected_border"),
-  CARD_SELECTED_BACKGROUND_BORDER("card_selected_background_border"),
-  GENDER_UNKNOWN("gender_unknown"),
-  GENDER_MALE("gender_male"),
-  GENDER_FEMALE("gender_female"),
-  LINK("link"),
-  LINK_CHILD("link_child"),
-  LINK_HOVERED("link_hovered"),
-  LINK_SELECTED("link_selected"),
-  SELECTION_BORDER("selection_border"),
-  SELECTION_BACKGROUND("selection_background");
+public final class DefaultConfigKeys {
+  /** Key to check or not updates */
+  public static final BooleanConfigKey CHECK_UPDATES = new BooleanConfigKey("check_updates");
 
-  private final String name;
-
-  private ColorConfigKey(String name) {
-    this.name = name;
+  static {
+    DefaultGlobalConfig.registerKey(CHECK_UPDATES, true);
   }
 
-  @Override
-  public String getName() {
-    return this.name;
-  }
+  private DefaultConfigKeys() {}
 }

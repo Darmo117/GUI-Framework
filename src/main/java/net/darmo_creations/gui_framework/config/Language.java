@@ -18,20 +18,58 @@
  */
 package net.darmo_creations.gui_framework.config;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
- * This enum lists all available languages.
+ * This class represents a language. It also provides methods to handle available languages.
  *
  * @author Damien Vergnet
  */
-public enum Language {
-  ENGLISH("English", "en_US", Locale.US),
-  FRENCH("Français", "fr_FR", Locale.FRANCE),
-  ESPERANTO("Esperanto", "eo", new Locale("eo"));
+public final class Language {
+  /** List of available languages */
+  private static Map<String, Language> languages;
 
-  private final String name;
-  private final String code;
+  /**
+   * Intializes the available languages.
+   * 
+   * @param config a map associating a language name to a locale
+   */
+  public static void init(Map<String, Locale> config) {
+    languages = new HashMap<>();
+    config.entrySet().forEach(e -> languages.put(e.getValue().toString(), new Language(e.getKey(), e.getValue().toString(), e.getValue())));
+  }
+
+  /**
+   * @return all available languages
+   */
+  public static Language[] getLanguages() {
+    return languages.keySet().stream().toArray(Language[]::new);
+  }
+
+  /**
+   * @return the default language
+   */
+  public static Language getDefault() {
+    return languages.get("default");
+  }
+
+  /**
+   * Returns the language matching the code.
+   * 
+   * @param code language code
+   * @return the matching value
+   */
+  public static Language fromCode(String code) {
+    for (Map.Entry<String, Language> e : languages.entrySet()) {
+      if (e.getKey().equals(code))
+        return e.getValue();
+    }
+    return null;
+  }
+
+  private final String name, code;
   private final Locale locale;
 
   private Language(String name, String code, Locale locale) {
@@ -64,19 +102,5 @@ public enum Language {
   @Override
   public String toString() {
     return getName();
-  }
-
-  /**
-   * Returns the value matching the code.
-   * 
-   * @param code language code
-   * @return the matching value
-   */
-  public static Language fromCode(String code) {
-    for (Language l : values()) {
-      if (l.getCode().equals(code))
-        return l;
-    }
-    return null;
   }
 }

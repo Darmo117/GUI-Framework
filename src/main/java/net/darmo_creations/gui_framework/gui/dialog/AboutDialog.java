@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.util.StringJoiner;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -40,7 +41,8 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
-import net.darmo_creations.gui_framework.util.Images;
+import net.darmo_creations.gui_framework.Application;
+import net.darmo_creations.gui_framework.ApplicationRegistry;
 import net.darmo_creations.utils.I18n;
 import net.darmo_creations.utils.swing.ImageLabel;
 import net.darmo_creations.utils.swing.dialog.AbstractDialog;
@@ -52,16 +54,17 @@ public class AboutDialog extends AbstractDialog {
   public AboutDialog(JFrame owner) {
     super(owner, Mode.CLOSE_OPTION, false);
 
+    Application application = ApplicationRegistry.getApplication();
+
     setTitle(I18n.getLocalizedString("dialog.about.title"));
 
     JPanel leftPnl = new JPanel();
     leftPnl.setBorder(new EmptyBorder(5, 5, 5, 5));
     leftPnl.setLayout(new BoxLayout(leftPnl, BoxLayout.Y_AXIS));
-    // FIXME disable resizing
-    ImageLabel icon = new ImageLabel(Images.JENEALOGIO);
+    ImageLabel icon = new ImageLabel(new ImageIcon(application.getIcon()), true);
     icon.setPreferredSize(new Dimension(100, 100));
     leftPnl.add(icon);
-    leftPnl.add(new JLabel(Images.GNU_GPL));
+    leftPnl.add(new JLabel(new ImageIcon(application.getLicenseIcon())));
     add(leftPnl, BorderLayout.WEST);
 
     JEditorPane textPnl = new JEditorPane();
@@ -74,12 +77,12 @@ public class AboutDialog extends AbstractDialog {
         try {
           Desktop.getDesktop().browse(new URI(e.getDescription()));
         }
-        catch (IOException | URISyntaxException e1) {
-          e1.printStackTrace();
+        catch (IOException | URISyntaxException ex) {
+          ex.printStackTrace();
         }
       }
     });
-    textPnl.setText(getHtml());
+    textPnl.setText(getHtml(application.getAboutFilePath()));
     add(new JScrollPane(textPnl), BorderLayout.CENTER);
 
     setActionListener(new DefaultDialogController<>(this));
@@ -88,8 +91,8 @@ public class AboutDialog extends AbstractDialog {
     setLocationRelativeTo(owner);
   }
 
-  private String getHtml() {
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/assets/about.html")))) {
+  private String getHtml(String filePath) {
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(filePath)))) {
       String line;
       StringJoiner sj = new StringJoiner("\n");
 
@@ -111,7 +114,7 @@ public class AboutDialog extends AbstractDialog {
 
     StyleSheet styleSheet = kit.getStyleSheet();
     styleSheet.addRule("body {font-family: sans serif; margin: 4px; font-size: 10px}");
-    styleSheet.addRule("h2 {margin-top: 0;}");
+    styleSheet.addRule("h2 {margin-top: 0}");
 
     return kit.createDefaultDocument();
   }

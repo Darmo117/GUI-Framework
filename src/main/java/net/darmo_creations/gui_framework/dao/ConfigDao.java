@@ -18,9 +18,11 @@
  */
 package net.darmo_creations.gui_framework.dao;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,10 +38,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import net.darmo_creations.gui_framework.config.BooleanConfigKey;
-import net.darmo_creations.gui_framework.config.ColorConfigKey;
 import net.darmo_creations.gui_framework.config.ConfigKey;
-import net.darmo_creations.gui_framework.config.GlobalConfig;
+import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
 import net.darmo_creations.gui_framework.config.Language;
 import net.darmo_creations.utils.JarUtil;
 
@@ -62,11 +62,11 @@ public class ConfigDao {
    * 
    * @return the config or null if a fatal error occured
    */
-  public GlobalConfig load() {
-    GlobalConfig config = new GlobalConfig();
+  public DefaultGlobalConfig load() {
+    DefaultGlobalConfig config = new DefaultGlobalConfig();
 
     try {
-      File fXmlFile = new File(JarUtil.getJarDir() + "config.xml");
+      File fXmlFile = new File(URLDecoder.decode(JarUtil.getJarDir() + "config.xml", "UTF-8"));
       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
       Document doc = dBuilder.parse(fXmlFile);
@@ -75,35 +75,31 @@ public class ConfigDao {
 
       Element root = (Element) doc.getElementsByTagName("Config").item(0);
       if (root != null) {
-        Element locale = (Element) root.getElementsByTagName("Locale").item(0);
-        if (locale != null) {
-          Language language = Language.fromCode(locale.getTextContent());
+        Element localeElm = (Element) root.getElementsByTagName("Locale").item(0);
+        if (localeElm != null) {
+          Language language = Language.fromCode(localeElm.getTextContent());
           if (language != null)
             config.setLanguage(language);
         }
 
-        Element colors = (Element) root.getElementsByTagName("Colors").item(0);
-        if (colors != null) {
-          NodeList colorNodes = colors.getElementsByTagName("Color");
-          for (int i = 0; i < colorNodes.getLength(); i++) {
-            Element color = (Element) colorNodes.item(i);
-            Color c = new Color(Integer.parseInt(color.getTextContent()));
-            config.setValue(ConfigKey.fromName(color.getAttribute("name"), ColorConfigKey.class), c);
-          }
-        }
+        Element valuesElm = (Element) root.getElementsByTagName("Values").item(0);
+        if (valuesElm != null) {
+          NodeList valuesList = valuesElm.getElementsByTagName("Value");
+          for (int i = 0; i < valuesList.getLength(); i++) {
+            Element valueElm = (Element) valuesList.item(i);
+            @SuppressWarnings("unchecked")
+            Class<ConfigKey<?>> keyClass = (Class<ConfigKey<?>>) Class.forName(valueElm.getAttribute("class"));
+            Optional<ConfigKey<?>> key = DefaultGlobalConfig.getKeyFromName(valueElm.getAttribute("name"), keyClass);
 
-        Element booleans = (Element) root.getElementsByTagName("Booleans").item(0);
-        if (booleans != null) {
-          NodeList booleanNodes = booleans.getElementsByTagName("Boolean");
-          for (int i = 0; i < booleanNodes.getLength(); i++) {
-            Element bool = (Element) booleanNodes.item(i);
-            boolean b = "true".equalsIgnoreCase(bool.getTextContent());
-            config.setValue(ConfigKey.fromName(bool.getAttribute("name"), BooleanConfigKey.class), b);
+            if (key.isPresent()) {
+              config.setValue(key.get(), key.get().deserializeValue(valueElm.getTextContent()));
+            }
           }
         }
       }
     }
-    catch (NullPointerException | ClassCastException | ParserConfigurationException | SAXException | IOException __) {}
+    catch (NullPointerException | ClassCastException | ParserConfigurationException | SAXException | IOException
+        | ClassNotFoundException ex) {}
 
     return config;
   }
@@ -113,7 +109,7 @@ public class ConfigDao {
    * 
    * @param config the config
    */
-  public void save(GlobalConfig config) {
+  public void save(DefaultGlobalConfig config) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -125,32 +121,23 @@ public class ConfigDao {
       locale.appendChild(doc.createTextNode(config.getLanguage().getCode()));
       root.appendChild(locale);
 
-      Element colors = doc.createElement("Colors");
-      for (ColorConfigKey key : ColorConfigKey.values()) {
-        Element color = doc.createElement("Color");
-        color.setAttribute("name", key.getName());
-        color.appendChild(doc.createTextNode("" + config.getValue(key).getRGB()));
-        colors.appendChild(color);
+      Element nodes = doc.createElement("Values");
+      for (ConfigKey<?> key : DefaultGlobalConfig.getRegisteredKeys()) {
+        Element node = doc.createElement("Value");
+        node.setAttribute("name", key.getName());
+        node.appendChild(doc.createTextNode(key.serializeValue(config.getValue(key))));
+        nodes.appendChild(node);
       }
-      root.appendChild(colors);
-
-      Element booleans = doc.createElement("Booleans");
-      for (BooleanConfigKey key : BooleanConfigKey.values()) {
-        Element bool = doc.createElement("Boolean");
-        bool.setAttribute("name", key.getName());
-        bool.appendChild(doc.createTextNode(config.getValue(key) ? "true" : "false"));
-        booleans.appendChild(bool);
-      }
-      root.appendChild(booleans);
+      root.appendChild(nodes);
 
       doc.appendChild(root);
 
       Transformer transformer = TransformerFactory.newInstance().newTransformer();
-      StreamResult result = new StreamResult(new File(JarUtil.getJarDir() + "config.xml"));
+      StreamResult result = new StreamResult(new File(URLDecoder.decode(JarUtil.getJarDir() + "config.xml", "UTF-8")));
 
       transformer.transform(new DOMSource(doc), result);
     }
-    catch (ParserConfigurationException | TransformerException __) {}
+    catch (ParserConfigurationException | TransformerException | UnsupportedEncodingException ex) {}
   }
 
   private ConfigDao() {}

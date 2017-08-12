@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TimeZone;
 
-import net.darmo_creations.gui_framework.model.date.DateBuilder;
 import net.darmo_creations.utils.I18n;
 
 /**
@@ -35,7 +34,7 @@ public final class CalendarUtil {
   /**
    * @return the current date
    */
-  public static Date getCurrentDate() {
+  public static Calendar getCurrentDate() {
     long offset = Calendar.getInstance().get(Calendar.ZONE_OFFSET);
     // Avoid null if no ID found
     String id = "";
@@ -48,14 +47,7 @@ public final class CalendarUtil {
         break;
       }
     }
-    Calendar c = Calendar.getInstance(TimeZone.getTimeZone(id), Locale.FRENCH);
-
-    DateBuilder builder = new DateBuilder();
-    builder.setYear(c.get(Calendar.YEAR));
-    builder.setMonth(c.get(Calendar.MONTH) + 1);
-    builder.setDate(c.get(Calendar.DAY_OF_MONTH));
-
-    return builder.getDate();
+    return Calendar.getInstance(TimeZone.getTimeZone(id), Locale.FRENCH);
   }
 
   /**
@@ -64,9 +56,11 @@ public final class CalendarUtil {
    * @param date the date
    * @return the formatted date or nothing if there is no date
    */
-  public static Optional<String> formatDate(Optional<Date> date) {
-    if (date.isPresent())
-      return Optional.of(I18n.getFormattedDate(date.get()));
+  public static Optional<String> formatDate(Optional<Calendar> date) {
+    if (date.isPresent()) {
+      Calendar c = date.get();
+      return Optional.of(I18n.getFormattedDate("" + c.get(Calendar.YEAR), "" + (c.get(Calendar.MONTH) + 1), "" + c.get(Calendar.DATE)));
+    }
     return Optional.empty();
   }
 

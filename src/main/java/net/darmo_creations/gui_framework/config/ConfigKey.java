@@ -25,24 +25,59 @@ package net.darmo_creations.gui_framework.config;
  *
  * @param <T> the type of the associated values
  */
-public interface ConfigKey<T> {
+public abstract class ConfigKey<T> {
+  private final String name;
+  private final Class<T> valueClass;
+
+  /**
+   * Creates a key with the given name.
+   * 
+   * @param name the name
+   */
+  public ConfigKey(String name, Class<T> valueClass) {
+    this.name = name;
+    this.valueClass = valueClass;
+  }
+
   /**
    * @return this key's name
    */
-  String getName();
+  public final String getName() {
+    return this.name;
+  }
 
   /**
-   * Returns the key matching the given name.
-   * 
-   * @param name the name
-   * @param keyClass the class of the returned key
-   * @return the key or null if no key were found
+   * @return the class of the associated values
    */
-  static <T extends Enum<T> & ConfigKey<?>> T fromName(String name, Class<T> keyClass) {
-    for (T value : keyClass.getEnumConstants()) {
-      if (value.getName().equals(name))
-        return value;
-    }
-    return null;
+  public final Class<T> getValueClass() {
+    return this.valueClass;
   }
+
+  /**
+   * Serializes a value.
+   * 
+   * @param value the value
+   * @return the serialized value
+   * @throws ClassCastException if the value is not of type T
+   */
+  @SuppressWarnings("unchecked")
+  public final String serializeValue(Object value) {
+    return serializeValueGeneric((T) value);
+  }
+
+  /**
+   * Serializes a value.
+   * 
+   * @param value the value
+   * @return the serialized value
+   */
+  protected abstract String serializeValueGeneric(T value);
+
+  /**
+   * Deserializes a value.
+   * 
+   * @param value the serialized value
+   * @return the deserialized value
+   */
+  public abstract T deserializeValue(String value);
 }
