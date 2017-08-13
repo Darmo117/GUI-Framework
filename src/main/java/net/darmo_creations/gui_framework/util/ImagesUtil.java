@@ -1,7 +1,7 @@
 /*
  * Copyright © 2017 Damien Vergnet
  * 
- * This file is part of Jenealogio.
+ * This file is part of GUI-Framework.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,12 @@ public final class ImagesUtil {
   public static final ImageIcon CHECKING_UPDATES = getIcon("/assets/icons/checking_updates.png");
   public static final ImageIcon NEW_UPDATE = getIcon("/assets/icons/new_update.png");
 
+  /**
+   * Loads the icon at the given path.
+   * 
+   * @param path the path
+   * @return the icon
+   */
   public static ImageIcon getIcon(String path) {
     return new ImageIcon(ImagesUtil.class.getResource(path));
   }
