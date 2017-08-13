@@ -37,6 +37,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.border.MatteBorder;
@@ -68,6 +69,7 @@ public abstract class ApplicationFrame extends JFrame {
   private AboutDialog aboutDialog;
   private UpdateDialog updateDialog;
 
+  private JPanel contentPnl;
   private JCheckBoxMenuItem checkUpdatesItem;
   private StatusBar statusBar;
   private JLabel updateLbl;
@@ -100,6 +102,8 @@ public abstract class ApplicationFrame extends JFrame {
     if (hasToolBar)
       add(initJToolBar(this.listeners), BorderLayout.NORTH);
 
+    this.contentPnl = new JPanel();
+
     this.statusBar = new StatusBar();
     add(this.statusBar, BorderLayout.SOUTH);
 
@@ -130,6 +134,13 @@ public abstract class ApplicationFrame extends JFrame {
   public String getBaseTitle() {
     Application application = ApplicationRegistry.getApplication();
     return application.getName() + " " + application.getCurrentVersion();
+  }
+
+  /**
+   * @return the panel where all content should be added
+   */
+  protected JPanel getContentPanel() {
+    return this.contentPnl;
   }
 
   /**
