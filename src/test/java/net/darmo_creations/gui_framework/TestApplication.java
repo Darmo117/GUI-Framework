@@ -20,9 +20,10 @@ package net.darmo_creations.gui_framework;
 
 import java.awt.Image;
 import java.io.InputStream;
+import java.util.Optional;
 
-import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
 import net.darmo_creations.gui_framework.config.Language;
+import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.utils.version.Version;
 
@@ -31,7 +32,7 @@ public class TestApplication implements Application {
   private static final Version VERSION = new Version(1, 0, 0, false);
 
   @Override
-  public ApplicationFrame initFrame(DefaultGlobalConfig config) {
+  public ApplicationFrame initFrame(WritableConfig config) {
     return new TestFrame(config);
   }
 
@@ -46,32 +47,47 @@ public class TestApplication implements Application {
   }
 
   @Override
+  public String getIconsLocation() {
+    return "/net/darmo_creations/gui_framework/assets/icons/";
+  }
+
+  @Override
   public InputStream getLanguageFilesStream(Language language) {
-    return null;
+    return TestApplication.class.getResourceAsStream("/net/darmo_creations/gui_framework/assets/langs/" + language.getCode() + ".lang");
   }
 
   @Override
-  public String getHelpDocumentationLink(Language language) {
-    return null;
+  public Optional<String> getHelpDocumentationLink(Language language) {
+    return Optional.empty();
   }
 
   @Override
-  public String getRssUpdatesLink() {
-    return null;
+  public boolean checkUpdate() {
+    return false;
   }
 
   @Override
-  public String getAboutFilePath() {
-    return null;
+  public Optional<String> getRssUpdatesLink() {
+    return Optional.empty();
   }
 
   @Override
-  public Image getIcon() {
-    return null;
+  public boolean hasAboutDialog() {
+    return false;
   }
 
   @Override
-  public Image getLicenseIcon() {
-    return null;
+  public Optional<String> getAboutFilePath() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Image> getIcon() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Image> getLicenseIcon() {
+    return Optional.empty();
   }
 }

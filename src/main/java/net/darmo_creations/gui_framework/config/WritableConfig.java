@@ -25,12 +25,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import net.darmo_creations.gui_framework.ApplicationRegistry;
+
 /**
  * This class is a default implementation for a config object.
  *
  * @author Damien Vergnet
  */
-public class DefaultGlobalConfig implements Cloneable {
+public class WritableConfig implements Cloneable {
   private static final Map<ConfigKey<?>, Object> DEFAULT_VALUES = new HashMap<>();
 
   /**
@@ -77,8 +79,8 @@ public class DefaultGlobalConfig implements Cloneable {
   /**
    * Creates a config with default values for all properties.
    */
-  public DefaultGlobalConfig() {
-    setLanguage(Language.getDefault());
+  public WritableConfig() {
+    setLanguage(ApplicationRegistry.getDefaultLanguage());
     this.map = new HashMap<>(DEFAULT_VALUES);
     setValue(DefaultConfigKeys.CHECK_UPDATES, true);
   }
@@ -119,8 +121,8 @@ public class DefaultGlobalConfig implements Cloneable {
    * @throws ClassCastException if the value is not null and not of type T
    */
   public <T> void setValue(ConfigKey<T> key, Object value) {
-    if (value != null && key.getClass() != value.getClass())
-      throw new ClassCastException("");
+    if (value != null && key.getValueClass() != value.getClass())
+      throw new ClassCastException("expected type was " + key.getValueClass() + " but actual type was " + value.getClass());
     this.map.put(key, value);
   }
 
@@ -129,9 +131,9 @@ public class DefaultGlobalConfig implements Cloneable {
    * copy of the current one.
    */
   @Override
-  public DefaultGlobalConfig clone() {
+  public WritableConfig clone() {
     try {
-      DefaultGlobalConfig config = (DefaultGlobalConfig) super.clone();
+      WritableConfig config = (WritableConfig) super.clone();
       config.map = new HashMap<>(this.map);
       return config;
     }

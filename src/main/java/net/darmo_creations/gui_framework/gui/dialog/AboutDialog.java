@@ -61,29 +61,35 @@ public class AboutDialog extends AbstractDialog {
     JPanel leftPnl = new JPanel();
     leftPnl.setBorder(new EmptyBorder(5, 5, 5, 5));
     leftPnl.setLayout(new BoxLayout(leftPnl, BoxLayout.Y_AXIS));
-    ImageLabel icon = new ImageLabel(new ImageIcon(application.getIcon()), true);
-    icon.setPreferredSize(new Dimension(100, 100));
-    leftPnl.add(icon);
-    leftPnl.add(new JLabel(new ImageIcon(application.getLicenseIcon())));
+    if (application.getIcon().isPresent()) {
+      ImageLabel icon = new ImageLabel(new ImageIcon(application.getIcon().get()), true);
+      icon.setPreferredSize(new Dimension(100, 100));
+      leftPnl.add(icon);
+    }
+    if (application.getLicenseIcon().isPresent()) {
+      leftPnl.add(new JLabel(new ImageIcon(application.getLicenseIcon().get())));
+    }
     add(leftPnl, BorderLayout.WEST);
 
-    JEditorPane textPnl = new JEditorPane();
-    textPnl.setContentType("text/html");
-    textPnl.setEditable(false);
-    textPnl.setPreferredSize(new Dimension(600, 200));
-    textPnl.setDocument(getDocument(textPnl));
-    textPnl.addHyperlinkListener(e -> {
-      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-        try {
-          Desktop.getDesktop().browse(new URI(e.getDescription()));
+    if (application.getAboutFilePath().isPresent()) {
+      JEditorPane textPnl = new JEditorPane();
+      textPnl.setContentType("text/html");
+      textPnl.setEditable(false);
+      textPnl.setPreferredSize(new Dimension(600, 200));
+      textPnl.setDocument(getDocument(textPnl));
+      textPnl.addHyperlinkListener(e -> {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          try {
+            Desktop.getDesktop().browse(new URI(e.getDescription()));
+          }
+          catch (IOException | URISyntaxException ex) {
+            ex.printStackTrace();
+          }
         }
-        catch (IOException | URISyntaxException ex) {
-          ex.printStackTrace();
-        }
-      }
-    });
-    textPnl.setText(getHtml(application.getAboutFilePath()));
-    add(new JScrollPane(textPnl), BorderLayout.CENTER);
+      });
+      textPnl.setText(getHtml(application.getAboutFilePath().get()));
+      add(new JScrollPane(textPnl), BorderLayout.CENTER);
+    }
 
     setActionListener(new DefaultDialogController<>(this));
 

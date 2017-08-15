@@ -27,9 +27,9 @@ import javax.swing.ImageIcon;
  */
 public final class ImagesUtil {
   public static final ImageIcon HELP = getIcon("/assets/icons/help.png");
-  public static final ImageIcon UPDATE_CHECK_FAILED = getIcon("/assets/icons/update_check_failed.png");
-  public static final ImageIcon CHECKING_UPDATES = getIcon("/assets/icons/checking_updates.png");
-  public static final ImageIcon NEW_UPDATE = getIcon("/assets/icons/new_update.png");
+  public static final ImageIcon UPDATE_CHECK_FAILED = getIcon("/assets/icons/updates_check_failed.png");
+  public static final ImageIcon CHECKING_UPDATES = getIcon("/assets/icons/checking_updates.gif");
+  public static final ImageIcon NEW_UPDATE = getIcon("/assets/icons/update_available.png");
 
   /**
    * Loads the icon at the given path.

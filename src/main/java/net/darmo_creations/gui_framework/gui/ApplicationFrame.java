@@ -45,8 +45,8 @@ import javax.swing.event.MouseInputAdapter;
 
 import net.darmo_creations.gui_framework.Application;
 import net.darmo_creations.gui_framework.ApplicationRegistry;
-import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
 import net.darmo_creations.gui_framework.config.Language;
+import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.controllers.ApplicationController;
 import net.darmo_creations.gui_framework.events.ChangeLanguageEvent;
 import net.darmo_creations.gui_framework.events.UserEvent;
@@ -76,12 +76,14 @@ public abstract class ApplicationFrame extends JFrame {
 
   private Map<UserEvent.Type, ActionListener> listeners;
 
-  public ApplicationFrame(DefaultGlobalConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended) {
+  public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended) {
     ApplicationController controller = preInit(config, hasMenuBar, hasToolBar, isFullyExtended);
+    Application application = ApplicationRegistry.getApplication();
 
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     setMinimumSize(new Dimension(800, 600));
-    setIconImage(ApplicationRegistry.getApplication().getIcon());
+    if (application.getIcon().isPresent())
+      setIconImage(ApplicationRegistry.getApplication().getIcon().get());
 
     addWindowListener(new WindowAdapter() {
       @Override
@@ -90,7 +92,8 @@ public abstract class ApplicationFrame extends JFrame {
       }
     });
 
-    this.aboutDialog = new AboutDialog(this);
+    if (application.hasAboutDialog())
+      this.aboutDialog = new AboutDialog(this);
     this.updateDialog = new UpdateDialog(this);
 
     this.listeners = new HashMap<>();
@@ -107,14 +110,16 @@ public abstract class ApplicationFrame extends JFrame {
     this.statusBar = new StatusBar();
     add(this.statusBar, BorderLayout.SOUTH);
 
-    this.updateLbl = new JLabel();
-    this.updateLbl.addMouseListener(new MouseInputAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        ApplicationRegistry.EVENTS_BUS.dispatchEvent(new UserEvent(UserEvent.DefaultType.OPEN_UPDATE));
-      }
-    });
-    this.statusBar.addRightComponent(this.updateLbl);
+    if (application.checkUpdate()) {
+      this.updateLbl = new JLabel();
+      this.updateLbl.addMouseListener(new MouseInputAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          ApplicationRegistry.EVENTS_BUS.dispatchEvent(new UserEvent(UserEvent.DefaultType.OPEN_UPDATE));
+        }
+      });
+      this.statusBar.addRightComponent(this.updateLbl);
+    }
 
     initContent(controller, config, hasMenuBar, hasToolBar, isFullyExtended);
 
@@ -148,13 +153,12 @@ public abstract class ApplicationFrame extends JFrame {
    * 
    * @return the application controller
    */
-  protected abstract ApplicationController preInit(DefaultGlobalConfig config, boolean hasMenuBar, boolean hasToolBar,
-      boolean isFullyExtended);
+  protected abstract ApplicationController preInit(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended);
 
   /**
    * The frame's content must be initialized in this method.
    */
-  protected abstract void initContent(ApplicationController controller, DefaultGlobalConfig config, boolean hasMenuBar, boolean hasToolBar,
+  protected abstract void initContent(ApplicationController controller, WritableConfig config, boolean hasMenuBar, boolean hasToolBar,
       boolean isFullyExtended);
 
   /**
@@ -163,7 +167,7 @@ public abstract class ApplicationFrame extends JFrame {
    * @param listeners the action listeners
    * @return the menu bar
    */
-  protected JMenuBar initJMenuBar(Map<UserEvent.Type, ActionListener> listeners, DefaultGlobalConfig config) {
+  protected JMenuBar initJMenuBar(Map<UserEvent.Type, ActionListener> listeners, WritableConfig config) {
     JMenuBar menuBar = new JMenuBar();
     JMenuItem i;
 
@@ -180,10 +184,10 @@ public abstract class ApplicationFrame extends JFrame {
       langMenu.setMnemonic(I18n.getLocalizedMnemonic("menu.lang"));
       optionsMenu.add(langMenu);
       ButtonGroup bg = new ButtonGroup();
-      for (Language l : Language.getLanguages()) {
+      for (Language l : ApplicationRegistry.getLanguages()) {
         langMenu.add(i = new JRadioButtonMenuItem(l.getName()));
         i.setSelected(l == config.getLanguage());
-        i.setIcon(ImagesUtil.getIcon("/assets/icons/flag-" + l.getCode() + ".png"));
+        i.setIcon(ImagesUtil.getIcon(ApplicationRegistry.getApplication().getIconsLocation() + "flag-" + l.getCode() + ".png"));
         i.addActionListener(e -> ApplicationRegistry.EVENTS_BUS.dispatchEvent(new ChangeLanguageEvent(l)));
         bg.add(i);
       }
@@ -236,7 +240,8 @@ public abstract class ApplicationFrame extends JFrame {
    * Sets the selection of the check updates item.
    */
   public void setCheckUpdatesItemSelected(boolean selected) {
-    this.checkUpdatesItem.setSelected(selected);
+    if (ApplicationRegistry.getApplication().checkUpdate())
+      this.checkUpdatesItem.setSelected(selected);
   }
 
   public static final int UPDATES_BLOCKED = 0;
@@ -253,6 +258,9 @@ public abstract class ApplicationFrame extends JFrame {
    * @param str an optional string to append to the end of the status
    */
   public void setUpdateLabelText(int mode, @Nullable String str) {
+    if (!ApplicationRegistry.getApplication().checkUpdate())
+      return;
+
     Icon icon = null;
     String s = null;
 
@@ -291,7 +299,8 @@ public abstract class ApplicationFrame extends JFrame {
    * Shows the "about" dialog.
    */
   public void showAboutDialog() {
-    this.aboutDialog.setVisible(true);
+    if (this.aboutDialog != null)
+      this.aboutDialog.setVisible(true);
   }
 
   /**

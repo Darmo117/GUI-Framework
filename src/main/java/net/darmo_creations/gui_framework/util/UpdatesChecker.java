@@ -99,7 +99,7 @@ public final class UpdatesChecker {
   /**
    * Checks if an update is available.
    */
-  public void checkUpdate() {
+  public synchronized void checkUpdate() {
     Application application = ApplicationRegistry.getApplication();
     EventsBus bus = ApplicationRegistry.EVENTS_BUS;
 
@@ -116,7 +116,7 @@ public final class UpdatesChecker {
       boolean noUpdate = false;
 
       try {
-        URL oracle = new URL(application.getRssUpdatesLink());
+        URL oracle = new URL(application.getRssUpdatesLink().get());
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(oracle.openStream()))) {
           StringJoiner joiner = new StringJoiner("\n");
@@ -177,7 +177,7 @@ public final class UpdatesChecker {
           }
         }
       }
-      catch (IOException ex) {
+      catch (NullPointerException | IOException ex) {
         error = true;
         errorMsg = ex.getLocalizedMessage();
       }

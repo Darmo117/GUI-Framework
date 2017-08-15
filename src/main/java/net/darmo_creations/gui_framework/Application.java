@@ -20,9 +20,10 @@ package net.darmo_creations.gui_framework;
 
 import java.awt.Image;
 import java.io.InputStream;
+import java.util.Optional;
 
-import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
 import net.darmo_creations.gui_framework.config.Language;
+import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.utils.version.Version;
 
@@ -39,7 +40,7 @@ public interface Application {
    * @param config the configuration
    * @return the main frame
    */
-  ApplicationFrame initFrame(DefaultGlobalConfig config);
+  ApplicationFrame initFrame(WritableConfig config);
 
   /**
    * @return application's name
@@ -50,6 +51,11 @@ public interface Application {
    * @return application's current version
    */
   Version getCurrentVersion();
+
+  /**
+   * @return the location inside the jar of the icons
+   */
+  String getIconsLocation();
 
   /**
    * Returns the imput stream to the language file corresponding to the given language.
@@ -65,27 +71,37 @@ public interface Application {
    * @param language the language
    * @return the link to the help documentation
    */
-  String getHelpDocumentationLink(Language language);
+  Optional<String> getHelpDocumentationLink(Language language);
+
+  /**
+   * @return true if the application has an update checker; false otherwise
+   */
+  boolean checkUpdate();
 
   /**
    * This method should return the link to the updates rss feed.
    * 
    * @return the link to fetch updates
    */
-  String getRssUpdatesLink();
+  Optional<String> getRssUpdatesLink();
+
+  /**
+   * @return true to enable the about dialog; false to disable it
+   */
+  boolean hasAboutDialog();
 
   /**
    * @return the path to the about file (must be in the jar)
    */
-  String getAboutFilePath();
+  Optional<String> getAboutFilePath();
 
   /**
    * @return application's icon
    */
-  Image getIcon();
+  Optional<Image> getIcon();
 
   /**
    * @return license icon
    */
-  Image getLicenseIcon();
+  Optional<Image> getLicenseIcon();
 }

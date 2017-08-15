@@ -24,21 +24,24 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
+import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.dao.ConfigDao;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.utils.I18n;
 
 /**
- * Application's main class. The main method from the application must call start() after it has
- * been registered to the {@code ApplicationRegistry}.
+ * The main method from the application must call Start.run() after it has been registered to the
+ * {@code ApplicationRegistry}.
  *
  * @author Damien Vergnet
  */
 public class Start {
+  /**
+   * Starts the application.
+   */
   public static void run() {
     Application application = ApplicationRegistry.getApplication();
-    DefaultGlobalConfig config = ConfigDao.getInstance().load();
+    WritableConfig config = ConfigDao.getInstance().load();
 
     try {
       I18n.init(application.getLanguageFilesStream(config.getLanguage()));

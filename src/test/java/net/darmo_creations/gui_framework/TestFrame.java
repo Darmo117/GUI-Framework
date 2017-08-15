@@ -20,24 +20,24 @@ package net.darmo_creations.gui_framework;
 
 import javax.swing.JLabel;
 
-import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
+import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.controllers.ApplicationController;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 
 public class TestFrame extends ApplicationFrame {
   private static final long serialVersionUID = -7892388146063580320L;
 
-  public TestFrame(DefaultGlobalConfig config) {
+  public TestFrame(WritableConfig config) {
     super(config, true, true, true);
   }
 
   @Override
-  protected ApplicationController preInit(DefaultGlobalConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended) {
+  protected ApplicationController preInit(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended) {
     return new ApplicationController(this, config);
   }
 
   @Override
-  protected void initContent(ApplicationController controller, DefaultGlobalConfig config, boolean hasMenuBar, boolean hasToolBar,
+  protected void initContent(ApplicationController controller, WritableConfig config, boolean hasMenuBar, boolean hasToolBar,
       boolean isFullyExtended) {
     getContentPanel().add(new JLabel("Label"));
   }

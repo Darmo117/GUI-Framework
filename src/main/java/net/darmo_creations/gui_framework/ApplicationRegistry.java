@@ -18,6 +18,12 @@
  */
 package net.darmo_creations.gui_framework;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
+import net.darmo_creations.gui_framework.config.Language;
 import net.darmo_creations.utils.events.EventsBus;
 
 /**
@@ -38,14 +44,77 @@ public final class ApplicationRegistry {
    * @param application
    */
   public static void registerApplication(Application app) {
-    application = app;
+    application = Objects.requireNonNull(app);
   }
 
   /**
    * @return the registered application
+   * @throws IllegalStateException if no application has been registered
    */
   public static Application getApplication() {
+    if (application == null)
+      throw new IllegalStateException("no application registered");
     return application;
+  }
+
+  /** List of available languages */
+  private static List<Language> languages;
+  /** Default language */
+  private static Language defaultLanguage;
+
+  /**
+   * Intializes the available languages. They will appear in the menu in the same order as they are
+   * in the list. The first language in the list will be the default if the config could not be
+   * loaded.
+   * 
+   * @param langs the languages
+   * @throws IllegalArgumentException if the list is empty
+   */
+  public static void setLanguages(Language... langs) {
+    setLanguages(Arrays.asList(langs));
+  }
+
+  /**
+   * Intializes the available languages. They will appear in the menu in the same order as they are
+   * in the list. The first language in the list will be the default if the config could not be
+   * loaded.
+   * 
+   * @param langs the languages
+   * @throws IllegalArgumentException if the list is empty
+   */
+  public static void setLanguages(List<Language> langs) {
+    languages = new ArrayList<>(langs);
+    if (languages.isEmpty())
+      throw new IllegalArgumentException("empty languages list");
+    defaultLanguage = languages.get(0);
+  }
+
+  /**
+   * @return all available languages
+   */
+  public static Language[] getLanguages() {
+    return languages.stream().toArray(Language[]::new);
+  }
+
+  /**
+   * @return the default language
+   */
+  public static Language getDefaultLanguage() {
+    return defaultLanguage;
+  }
+
+  /**
+   * Returns the language matching the code.
+   * 
+   * @param code language code
+   * @return the matching value
+   */
+  public static Language getLanguageFromCode(String code) {
+    for (Language l : languages) {
+      if (l.getCode().equals(code))
+        return l;
+    }
+    return null;
   }
 
   private ApplicationRegistry() {}

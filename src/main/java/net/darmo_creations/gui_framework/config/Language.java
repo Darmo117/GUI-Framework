@@ -18,9 +18,7 @@
  */
 package net.darmo_creations.gui_framework.config;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * This class represents a language. It also provides methods to handle available languages.
@@ -28,53 +26,12 @@ import java.util.Map;
  * @author Damien Vergnet
  */
 public final class Language {
-  /** List of available languages */
-  private static Map<String, Language> languages;
-
-  /**
-   * Intializes the available languages.
-   * 
-   * @param config a map associating a language name to a locale
-   */
-  public static void init(Map<String, Locale> config) {
-    languages = new HashMap<>();
-    config.entrySet().forEach(e -> languages.put(e.getValue().toString(), new Language(e.getKey(), e.getValue().toString(), e.getValue())));
-  }
-
-  /**
-   * @return all available languages
-   */
-  public static Language[] getLanguages() {
-    return languages.keySet().stream().toArray(Language[]::new);
-  }
-
-  /**
-   * @return the default language
-   */
-  public static Language getDefault() {
-    return languages.get("default");
-  }
-
-  /**
-   * Returns the language matching the code.
-   * 
-   * @param code language code
-   * @return the matching value
-   */
-  public static Language fromCode(String code) {
-    for (Map.Entry<String, Language> e : languages.entrySet()) {
-      if (e.getKey().equals(code))
-        return e.getValue();
-    }
-    return null;
-  }
-
   private final String name, code;
   private final Locale locale;
 
-  private Language(String name, String code, Locale locale) {
+  public Language(String name, Locale locale) {
     this.name = name;
-    this.code = code;
+    this.code = locale.toString();
     this.locale = locale;
   }
 

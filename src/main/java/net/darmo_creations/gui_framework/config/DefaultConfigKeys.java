@@ -28,7 +28,7 @@ public final class DefaultConfigKeys {
   public static final BooleanConfigKey CHECK_UPDATES = new BooleanConfigKey("check_updates");
 
   static {
-    DefaultGlobalConfig.registerKey(CHECK_UPDATES, true);
+    WritableConfig.registerKey(CHECK_UPDATES, true);
   }
 
   private DefaultConfigKeys() {}

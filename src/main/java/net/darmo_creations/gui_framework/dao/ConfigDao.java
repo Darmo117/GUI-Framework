@@ -38,8 +38,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import net.darmo_creations.gui_framework.ApplicationRegistry;
 import net.darmo_creations.gui_framework.config.ConfigKey;
-import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
+import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.config.Language;
 import net.darmo_creations.utils.JarUtil;
 
@@ -62,8 +63,8 @@ public class ConfigDao {
    * 
    * @return the config or null if a fatal error occured
    */
-  public DefaultGlobalConfig load() {
-    DefaultGlobalConfig config = new DefaultGlobalConfig();
+  public WritableConfig load() {
+    WritableConfig config = new WritableConfig();
 
     try {
       File fXmlFile = new File(URLDecoder.decode(JarUtil.getJarDir() + "config.xml", "UTF-8"));
@@ -77,7 +78,7 @@ public class ConfigDao {
       if (root != null) {
         Element localeElm = (Element) root.getElementsByTagName("Locale").item(0);
         if (localeElm != null) {
-          Language language = Language.fromCode(localeElm.getTextContent());
+          Language language = ApplicationRegistry.getLanguageFromCode(localeElm.getTextContent());
           if (language != null)
             config.setLanguage(language);
         }
@@ -89,7 +90,7 @@ public class ConfigDao {
             Element valueElm = (Element) valuesList.item(i);
             @SuppressWarnings("unchecked")
             Class<ConfigKey<?>> keyClass = (Class<ConfigKey<?>>) Class.forName(valueElm.getAttribute("class"));
-            Optional<ConfigKey<?>> key = DefaultGlobalConfig.getKeyFromName(valueElm.getAttribute("name"), keyClass);
+            Optional<ConfigKey<?>> key = WritableConfig.getKeyFromName(valueElm.getAttribute("name"), keyClass);
 
             if (key.isPresent()) {
               config.setValue(key.get(), key.get().deserializeValue(valueElm.getTextContent()));
@@ -109,7 +110,7 @@ public class ConfigDao {
    * 
    * @param config the config
    */
-  public void save(DefaultGlobalConfig config) {
+  public void save(WritableConfig config) {
     try {
       DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
       DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -122,7 +123,7 @@ public class ConfigDao {
       root.appendChild(locale);
 
       Element nodes = doc.createElement("Values");
-      for (ConfigKey<?> key : DefaultGlobalConfig.getRegisteredKeys()) {
+      for (ConfigKey<?> key : WritableConfig.getRegisteredKeys()) {
         Element node = doc.createElement("Value");
         node.setAttribute("name", key.getName());
         node.appendChild(doc.createTextNode(key.serializeValue(config.getValue(key))));

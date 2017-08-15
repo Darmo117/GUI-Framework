@@ -22,13 +22,14 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
 import net.darmo_creations.gui_framework.Application;
 import net.darmo_creations.gui_framework.ApplicationRegistry;
 import net.darmo_creations.gui_framework.config.DefaultConfigKeys;
-import net.darmo_creations.gui_framework.config.DefaultGlobalConfig;
+import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.dao.ConfigDao;
 import net.darmo_creations.gui_framework.events.ChangeLanguageEvent;
 import net.darmo_creations.gui_framework.events.UpdateEvent;
@@ -47,9 +48,11 @@ import net.darmo_creations.utils.events.SubsribeEvent;
 public class ApplicationController {
   private final ApplicationFrame frame;
 
-  private DefaultGlobalConfig config;
+  private WritableConfig config;
   /** Updates checker */
   private UpdatesChecker updatesChecker;
+
+  private boolean checkUpdatesEnabled;
 
   /**
    * Creates an application controller.
@@ -57,9 +60,10 @@ public class ApplicationController {
    * @param frame the frame
    * @param config the configuration
    */
-  public ApplicationController(ApplicationFrame frame, DefaultGlobalConfig config) {
+  public ApplicationController(ApplicationFrame frame, WritableConfig config) {
     this.frame = frame;
     this.config = config;
+    this.checkUpdatesEnabled = ApplicationRegistry.getApplication().checkUpdate();
     this.updatesChecker = new UpdatesChecker();
   }
 
@@ -69,6 +73,7 @@ public class ApplicationController {
   public void init() {
     this.frame.setCheckUpdatesItemSelected(this.config.getValue(DefaultConfigKeys.CHECK_UPDATES));
     this.frame.setUpdateLabelText(ApplicationFrame.CHECKING_UPDATES, null);
+    this.updatesChecker.checkUpdate();
   }
 
   /**
@@ -122,14 +127,14 @@ public class ApplicationController {
       }
       catch (IOException | URISyntaxException __) {
         this.frame.showErrorDialog(I18n.getLocalizedString("popup.change_language.restart_error.text"));
-        System.exit(0);
+        System.exit(1);
       }
     }
   }
 
   @SubsribeEvent
   public void onUpdateChecking(UpdateEvent.Checking e) {
-    if (!this.config.getValue(DefaultConfigKeys.CHECK_UPDATES)) {
+    if (!this.checkUpdatesEnabled || !this.config.getValue(DefaultConfigKeys.CHECK_UPDATES)) {
       this.frame.setUpdateLabelText(ApplicationFrame.UPDATES_BLOCKED, null);
       e.setCanceled();
     }
@@ -157,7 +162,9 @@ public class ApplicationController {
   private void showHelp() {
     try {
       Application application = ApplicationRegistry.getApplication();
-      Desktop.getDesktop().browse(new URI(application.getHelpDocumentationLink(this.config.getLanguage())));
+      Optional<String> link = application.getHelpDocumentationLink(this.config.getLanguage());
+      if (link.isPresent())
+        Desktop.getDesktop().browse(new URI(link.get()));
     }
     catch (IOException | URISyntaxException ex) {}
   }
