@@ -18,7 +18,6 @@
  */
 package net.darmo_creations.gui_framework;
 
-import java.awt.Image;
 import java.io.InputStream;
 import java.util.Optional;
 
@@ -57,37 +56,42 @@ public class TestApplication implements Application {
   }
 
   @Override
-  public Optional<String> getHelpDocumentationLink(Language language) {
-    return Optional.empty();
-  }
-
-  @Override
-  public boolean checkUpdate() {
-    return false;
+  public boolean checkUpdates() {
+    return true;
   }
 
   @Override
   public Optional<String> getRssUpdatesLink() {
-    return Optional.empty();
+    return Optional.of("https://github.com/Darmo117/Jenealogio/releases.atom");
+  }
+
+  @Override
+  public boolean hasHelpDocumentation() {
+    return true;
+  }
+
+  @Override
+  public Optional<String> getHelpDocumentationLink(Language language) {
+    return Optional.of(String.format("http://darmo-creations.net/jenealogio/help-doc/%s/", language.getCode()));
   }
 
   @Override
   public boolean hasAboutDialog() {
-    return false;
+    return true;
   }
 
   @Override
   public Optional<String> getAboutFilePath() {
-    return Optional.empty();
+    return Optional.of("/net/darmo_creations/gui_framework/assets/about.html");
   }
 
   @Override
-  public Optional<Image> getIcon() {
-    return Optional.empty();
+  public Optional<String> getIcon() {
+    return Optional.of("/net/darmo_creations/gui_framework/assets/icons/jenealogio_icon.png");
   }
 
   @Override
-  public Optional<Image> getLicenseIcon() {
-    return Optional.empty();
+  public Optional<String> getLicenseIcon() {
+    return Optional.of("/net/darmo_creations/gui_framework/assets/icons/gplv3-127x51.png");
   }
 }

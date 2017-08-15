@@ -28,7 +28,7 @@ public class TestFrame extends ApplicationFrame {
   private static final long serialVersionUID = -7892388146063580320L;
 
   public TestFrame(WritableConfig config) {
-    super(config, true, true, true);
+    super(config, true, true, true, true);
   }
 
   @Override

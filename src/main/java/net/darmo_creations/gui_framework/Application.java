@@ -18,7 +18,6 @@
  */
 package net.darmo_creations.gui_framework;
 
-import java.awt.Image;
 import java.io.InputStream;
 import java.util.Optional;
 
@@ -66,17 +65,9 @@ public interface Application {
   InputStream getLanguageFilesStream(Language language);
 
   /**
-   * This method should return the link to the help documentation in the given language.
-   * 
-   * @param language the language
-   * @return the link to the help documentation
-   */
-  Optional<String> getHelpDocumentationLink(Language language);
-
-  /**
    * @return true if the application has an update checker; false otherwise
    */
-  boolean checkUpdate();
+  boolean checkUpdates();
 
   /**
    * This method should return the link to the updates rss feed.
@@ -84,6 +75,19 @@ public interface Application {
    * @return the link to fetch updates
    */
   Optional<String> getRssUpdatesLink();
+
+  /**
+   * @return true to enable the help doc link; false otherwise
+   */
+  boolean hasHelpDocumentation();
+
+  /**
+   * This method should return the link to the help documentation in the given language.
+   * 
+   * @param language the language
+   * @return the link to the help documentation
+   */
+  Optional<String> getHelpDocumentationLink(Language language);
 
   /**
    * @return true to enable the about dialog; false to disable it
@@ -96,12 +100,12 @@ public interface Application {
   Optional<String> getAboutFilePath();
 
   /**
-   * @return application's icon
+   * @return application's icon path
    */
-  Optional<Image> getIcon();
+  Optional<String> getIcon();
 
   /**
-   * @return license icon
+   * @return license icon path
    */
-  Optional<Image> getLicenseIcon();
+  Optional<String> getLicenseIcon();
 }

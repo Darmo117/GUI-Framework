@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.darmo_creations.gui_framework.gui.dialog.update;
+package net.darmo_creations.gui_framework.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
@@ -28,6 +28,9 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent.EventType;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import net.darmo_creations.utils.I18n;
 import net.darmo_creations.utils.swing.dialog.AbstractDialog;
@@ -54,6 +57,7 @@ public class UpdateDialog extends AbstractDialog {
     this.patchnotePnl = new JEditorPane();
     this.patchnotePnl.setEditable(false);
     this.patchnotePnl.setContentType("text/html");
+    this.patchnotePnl.setDocument(getDocument(this.patchnotePnl));
     this.patchnotePnl.addHyperlinkListener(e -> {
       try {
         if (e.getEventType() == EventType.ACTIVATED)
@@ -84,5 +88,16 @@ public class UpdateDialog extends AbstractDialog {
     String html = String.format("<html><h1>%1$s</h1>%2$s<br /><a href=\"%3$s\">%3$s</a><h4>%4$s</h4>%5$s</html>", title, linkTitle, link,
         listTitle, changelog);
     this.patchnotePnl.setText(html);
+  }
+
+  private Document getDocument(JEditorPane textPane) {
+    HTMLEditorKit kit = new HTMLEditorKit();
+    textPane.setEditorKit(kit);
+
+    StyleSheet styleSheet = kit.getStyleSheet();
+    styleSheet.addRule("body {font-family: sans serif; margin: 4px; font-size: 10px}");
+    styleSheet.addRule("h2 {margin-top: 0}");
+
+    return kit.createDefaultDocument();
   }
 }

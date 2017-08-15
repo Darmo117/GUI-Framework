@@ -63,7 +63,7 @@ public class ApplicationController {
   public ApplicationController(ApplicationFrame frame, WritableConfig config) {
     this.frame = frame;
     this.config = config;
-    this.checkUpdatesEnabled = ApplicationRegistry.getApplication().checkUpdate();
+    this.checkUpdatesEnabled = ApplicationRegistry.getApplication().checkUpdates();
     this.updatesChecker = new UpdatesChecker();
   }
 

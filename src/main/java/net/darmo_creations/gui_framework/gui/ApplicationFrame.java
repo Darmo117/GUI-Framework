@@ -51,7 +51,7 @@ import net.darmo_creations.gui_framework.controllers.ApplicationController;
 import net.darmo_creations.gui_framework.events.ChangeLanguageEvent;
 import net.darmo_creations.gui_framework.events.UserEvent;
 import net.darmo_creations.gui_framework.gui.dialog.AboutDialog;
-import net.darmo_creations.gui_framework.gui.dialog.update.UpdateDialog;
+import net.darmo_creations.gui_framework.gui.dialog.UpdateDialog;
 import net.darmo_creations.gui_framework.util.ImagesUtil;
 import net.darmo_creations.utils.I18n;
 import net.darmo_creations.utils.Nullable;
@@ -71,19 +71,22 @@ public abstract class ApplicationFrame extends JFrame {
 
   private JPanel contentPnl;
   private JCheckBoxMenuItem checkUpdatesItem;
+  private JMenu optionsMenu, helpMenu;
+  private JToolBar toolBar;
   private StatusBar statusBar;
   private JLabel updateLbl;
 
   private Map<UserEvent.Type, ActionListener> listeners;
 
-  public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended) {
+  public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean hasStatusBar, boolean isFullyExtended) {
     ApplicationController controller = preInit(config, hasMenuBar, hasToolBar, isFullyExtended);
     Application application = ApplicationRegistry.getApplication();
 
+    setTitle(getBaseTitle());
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     setMinimumSize(new Dimension(800, 600));
     if (application.getIcon().isPresent())
-      setIconImage(ApplicationRegistry.getApplication().getIcon().get());
+      setIconImage(ImagesUtil.getIcon(ApplicationRegistry.getApplication().getIcon().get()).getImage());
 
     addWindowListener(new WindowAdapter() {
       @Override
@@ -100,17 +103,29 @@ public abstract class ApplicationFrame extends JFrame {
     for (UserEvent.DefaultType type : UserEvent.DefaultType.values())
       this.listeners.put(type, e -> ApplicationRegistry.EVENTS_BUS.dispatchEvent(new UserEvent(type)));
 
-    if (hasMenuBar)
-      setJMenuBar(initJMenuBar(this.listeners, config));
-    if (hasToolBar)
-      add(initJToolBar(this.listeners), BorderLayout.NORTH);
+    if (hasMenuBar) {
+      JMenuBar bar = initJMenuBar(this.listeners, config);
+      for (int i = 0; i < bar.getMenuCount();) {
+        if (bar.getMenu(i).getMenuComponentCount() == 0) {
+          bar.remove(i);
+        }
+        else
+          i++;
+      }
+      setJMenuBar(bar);
+    }
+    if (hasToolBar) {
+      initJToolBar(this.listeners);
+      add(this.toolBar, BorderLayout.NORTH);
+    }
 
     this.contentPnl = new JPanel();
+    add(this.contentPnl, BorderLayout.CENTER);
 
     this.statusBar = new StatusBar();
     add(this.statusBar, BorderLayout.SOUTH);
 
-    if (application.checkUpdate()) {
+    if (application.checkUpdates()) {
       this.updateLbl = new JLabel();
       this.updateLbl.addMouseListener(new MouseInputAdapter() {
         @Override
@@ -134,21 +149,6 @@ public abstract class ApplicationFrame extends JFrame {
   }
 
   /**
-   * @return the frame's base title
-   */
-  public String getBaseTitle() {
-    Application application = ApplicationRegistry.getApplication();
-    return application.getName() + " " + application.getCurrentVersion();
-  }
-
-  /**
-   * @return the panel where all content should be added
-   */
-  protected JPanel getContentPanel() {
-    return this.contentPnl;
-  }
-
-  /**
    * Called before the frame is initialized.
    * 
    * @return the application controller
@@ -168,49 +168,54 @@ public abstract class ApplicationFrame extends JFrame {
    * @return the menu bar
    */
   protected JMenuBar initJMenuBar(Map<UserEvent.Type, ActionListener> listeners, WritableConfig config) {
+    Application application = ApplicationRegistry.getApplication();
     JMenuBar menuBar = new JMenuBar();
     JMenuItem i;
 
     // 'Options' menu
-    {
-      JMenu optionsMenu = new JMenu(I18n.getLocalizedString("menu.options.text"));
-      optionsMenu.setMnemonic(I18n.getLocalizedMnemonic("menu.options"));
+    this.optionsMenu = new JMenu(I18n.getLocalizedString("menu.options.text"));
+    this.optionsMenu.setMnemonic(I18n.getLocalizedMnemonic("menu.options"));
 
-      optionsMenu.add(this.checkUpdatesItem = new JCheckBoxMenuItem(I18n.getLocalizedString("item.check_updates.text")));
+    if (application.checkUpdates()) {
+      this.optionsMenu.add(this.checkUpdatesItem = new JCheckBoxMenuItem(I18n.getLocalizedString("item.check_updates.text")));
       this.checkUpdatesItem.setMnemonic(I18n.getLocalizedMnemonic("item.check_updates"));
       this.checkUpdatesItem.addActionListener(listeners.get(UserEvent.DefaultType.TOGGLE_CHECK_UPDATES));
+    }
 
+    if (ApplicationRegistry.getLanguages().length > 1) {
       JMenu langMenu = new JMenu(I18n.getLocalizedString("menu.lang.text"));
       langMenu.setMnemonic(I18n.getLocalizedMnemonic("menu.lang"));
-      optionsMenu.add(langMenu);
+      this.optionsMenu.add(langMenu);
       ButtonGroup bg = new ButtonGroup();
       for (Language l : ApplicationRegistry.getLanguages()) {
         langMenu.add(i = new JRadioButtonMenuItem(l.getName()));
         i.setSelected(l == config.getLanguage());
-        i.setIcon(ImagesUtil.getIcon(ApplicationRegistry.getApplication().getIconsLocation() + "flag-" + l.getCode() + ".png"));
+        i.setIcon(ImagesUtil.getIcon(application.getIconsLocation() + "flag-" + l.getCode() + ".png"));
         i.addActionListener(e -> ApplicationRegistry.EVENTS_BUS.dispatchEvent(new ChangeLanguageEvent(l)));
         bg.add(i);
       }
-
-      menuBar.add(optionsMenu);
     }
 
-    // 'Help' menu
-    {
-      JMenu helpMenu = new JMenu(I18n.getLocalizedString("menu.help.text"));
-      helpMenu.setMnemonic(I18n.getLocalizedMnemonic("menu.help"));
+    menuBar.add(this.optionsMenu);
 
-      helpMenu.add(i = new JMenuItem(I18n.getLocalizedString("item.help.text")));
+    // 'Help' menu
+    this.helpMenu = new JMenu(I18n.getLocalizedString("menu.help.text"));
+    this.helpMenu.setMnemonic(I18n.getLocalizedMnemonic("menu.help"));
+
+    if (application.hasHelpDocumentation()) {
+      this.helpMenu.add(i = new JMenuItem(I18n.getLocalizedString("item.help.text")));
       i.setIcon(ImagesUtil.HELP);
       i.setMnemonic(I18n.getLocalizedMnemonic("item.help"));
       i.addActionListener(listeners.get(UserEvent.DefaultType.HELP));
+    }
 
-      helpMenu.add(i = new JMenuItem(I18n.getLocalizedString("item.about.text")));
+    if (application.hasAboutDialog()) {
+      this.helpMenu.add(i = new JMenuItem(I18n.getLocalizedString("item.about.text")));
       i.setMnemonic(I18n.getLocalizedMnemonic("item.about"));
       i.addActionListener(listeners.get(UserEvent.DefaultType.ABOUT));
-
-      menuBar.add(helpMenu);
     }
+
+    menuBar.add(this.helpMenu);
 
     return menuBar;
   }
@@ -221,12 +226,37 @@ public abstract class ApplicationFrame extends JFrame {
    * @param listeners the action listeners
    * @return the tool bar
    */
-  protected JToolBar initJToolBar(Map<UserEvent.Type, ActionListener> listeners) {
-    JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
-    toolBar.setFloatable(false);
-    toolBar.setBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY));
+  protected void initJToolBar(Map<UserEvent.Type, ActionListener> listeners) {
+    this.toolBar = new JToolBar(JToolBar.HORIZONTAL);
+    this.toolBar.setFloatable(false);
+    this.toolBar.setBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY));
+  }
 
-    return toolBar;
+  /**
+   * @return the frame's base title
+   */
+  public String getBaseTitle() {
+    Application application = ApplicationRegistry.getApplication();
+    return application.getName() + " " + application.getCurrentVersion();
+  }
+
+  /**
+   * @return the panel where all content should be added
+   */
+  protected JPanel getContentPanel() {
+    return this.contentPnl;
+  }
+
+  protected JMenu getOptionsMenu() {
+    return this.optionsMenu;
+  }
+
+  protected JMenu getHelpMenu() {
+    return this.helpMenu;
+  }
+
+  protected StatusBar getStatusBar() {
+    return this.statusBar;
   }
 
   /**
@@ -240,7 +270,7 @@ public abstract class ApplicationFrame extends JFrame {
    * Sets the selection of the check updates item.
    */
   public void setCheckUpdatesItemSelected(boolean selected) {
-    if (ApplicationRegistry.getApplication().checkUpdate())
+    if (ApplicationRegistry.getApplication().checkUpdates())
       this.checkUpdatesItem.setSelected(selected);
   }
 
@@ -258,7 +288,7 @@ public abstract class ApplicationFrame extends JFrame {
    * @param str an optional string to append to the end of the status
    */
   public void setUpdateLabelText(int mode, @Nullable String str) {
-    if (!ApplicationRegistry.getApplication().checkUpdate())
+    if (!ApplicationRegistry.getApplication().checkUpdates())
       return;
 
     Icon icon = null;

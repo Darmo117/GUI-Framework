@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.SortedMap;
 import java.util.StringJoiner;
@@ -177,7 +178,7 @@ public final class UpdatesChecker {
           }
         }
       }
-      catch (NullPointerException | IOException ex) {
+      catch (NoSuchElementException | IOException ex) {
         error = true;
         errorMsg = ex.getLocalizedMessage();
       }

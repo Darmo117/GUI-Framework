@@ -29,7 +29,6 @@ import java.net.URISyntaxException;
 import java.util.StringJoiner;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,6 +42,7 @@ import javax.swing.text.html.StyleSheet;
 
 import net.darmo_creations.gui_framework.Application;
 import net.darmo_creations.gui_framework.ApplicationRegistry;
+import net.darmo_creations.gui_framework.util.ImagesUtil;
 import net.darmo_creations.utils.I18n;
 import net.darmo_creations.utils.swing.ImageLabel;
 import net.darmo_creations.utils.swing.dialog.AbstractDialog;
@@ -57,17 +57,19 @@ public class AboutDialog extends AbstractDialog {
     Application application = ApplicationRegistry.getApplication();
 
     setTitle(I18n.getLocalizedString("dialog.about.title"));
+    setPreferredSize(new Dimension(600, 300));
+    setMinimumSize(getPreferredSize());
 
     JPanel leftPnl = new JPanel();
     leftPnl.setBorder(new EmptyBorder(5, 5, 5, 5));
     leftPnl.setLayout(new BoxLayout(leftPnl, BoxLayout.Y_AXIS));
     if (application.getIcon().isPresent()) {
-      ImageLabel icon = new ImageLabel(new ImageIcon(application.getIcon().get()), true);
+      ImageLabel icon = new ImageLabel(ImagesUtil.getIcon(application.getIcon().get()), true);
       icon.setPreferredSize(new Dimension(100, 100));
       leftPnl.add(icon);
     }
     if (application.getLicenseIcon().isPresent()) {
-      leftPnl.add(new JLabel(new ImageIcon(application.getLicenseIcon().get())));
+      leftPnl.add(new JLabel(ImagesUtil.getIcon(application.getLicenseIcon().get())));
     }
     add(leftPnl, BorderLayout.WEST);
 
