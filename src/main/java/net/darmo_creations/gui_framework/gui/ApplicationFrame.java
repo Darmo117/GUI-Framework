@@ -22,11 +22,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -41,7 +43,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.border.MatteBorder;
-import javax.swing.event.MouseInputAdapter;
 
 import net.darmo_creations.gui_framework.Application;
 import net.darmo_creations.gui_framework.ApplicationRegistry;
@@ -76,10 +77,12 @@ public abstract class ApplicationFrame extends JFrame {
   private StatusBar statusBar;
   private JLabel updateLbl;
 
+  protected final boolean hasMenuBar, hasToolBar, hasStatusBar;
+
   private Map<UserEvent.Type, ActionListener> listeners;
 
   public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean hasStatusBar, boolean isFullyExtended) {
-    ApplicationController controller = preInit(config, hasMenuBar, hasToolBar, isFullyExtended);
+    ApplicationController controller = preInit(config);
     Application application = ApplicationRegistry.getApplication();
 
     setTitle(getBaseTitle());
@@ -95,6 +98,10 @@ public abstract class ApplicationFrame extends JFrame {
       }
     });
 
+    this.hasMenuBar = hasMenuBar;
+    this.hasToolBar = hasToolBar;
+    this.hasStatusBar = hasStatusBar;
+
     if (application.hasAboutDialog())
       this.aboutDialog = new AboutDialog(this);
     this.updateDialog = new UpdateDialog(this);
@@ -103,7 +110,7 @@ public abstract class ApplicationFrame extends JFrame {
     for (UserEvent.DefaultType type : UserEvent.DefaultType.values())
       this.listeners.put(type, e -> ApplicationRegistry.EVENTS_BUS.dispatchEvent(new UserEvent(type)));
 
-    if (hasMenuBar) {
+    if (this.hasMenuBar) {
       JMenuBar bar = initJMenuBar(this.listeners, config);
       for (int i = 0; i < bar.getMenuCount();) {
         if (bar.getMenu(i).getMenuComponentCount() == 0) {
@@ -114,20 +121,22 @@ public abstract class ApplicationFrame extends JFrame {
       }
       setJMenuBar(bar);
     }
-    if (hasToolBar) {
-      initJToolBar(this.listeners);
+    if (this.hasToolBar) {
+      this.toolBar = initJToolBar(this.listeners);
       add(this.toolBar, BorderLayout.NORTH);
     }
 
     this.contentPnl = new JPanel();
     add(this.contentPnl, BorderLayout.CENTER);
 
-    this.statusBar = new StatusBar();
-    add(this.statusBar, BorderLayout.SOUTH);
+    if (this.hasStatusBar) {
+      this.statusBar = new StatusBar();
+      add(this.statusBar, BorderLayout.SOUTH);
+    }
 
-    if (application.checkUpdates()) {
+    if (this.hasStatusBar && application.checkUpdates()) {
       this.updateLbl = new JLabel();
-      this.updateLbl.addMouseListener(new MouseInputAdapter() {
+      this.updateLbl.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
           ApplicationRegistry.EVENTS_BUS.dispatchEvent(new UserEvent(UserEvent.DefaultType.OPEN_UPDATE));
@@ -136,7 +145,7 @@ public abstract class ApplicationFrame extends JFrame {
       this.statusBar.addRightComponent(this.updateLbl);
     }
 
-    initContent(controller, config, hasMenuBar, hasToolBar, isFullyExtended);
+    initContent(controller, config);
 
     ApplicationRegistry.EVENTS_BUS.register(controller);
 
@@ -153,13 +162,12 @@ public abstract class ApplicationFrame extends JFrame {
    * 
    * @return the application controller
    */
-  protected abstract ApplicationController preInit(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended);
+  protected abstract ApplicationController preInit(WritableConfig config);
 
   /**
    * The frame's content must be initialized in this method.
    */
-  protected abstract void initContent(ApplicationController controller, WritableConfig config, boolean hasMenuBar, boolean hasToolBar,
-      boolean isFullyExtended);
+  protected abstract void initContent(ApplicationController controller, WritableConfig config);
 
   /**
    * Initializes the menu bar.
@@ -226,10 +234,13 @@ public abstract class ApplicationFrame extends JFrame {
    * @param listeners the action listeners
    * @return the tool bar
    */
-  protected void initJToolBar(Map<UserEvent.Type, ActionListener> listeners) {
-    this.toolBar = new JToolBar(JToolBar.HORIZONTAL);
-    this.toolBar.setFloatable(false);
-    this.toolBar.setBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY));
+  protected JToolBar initJToolBar(Map<UserEvent.Type, ActionListener> listeners) {
+    JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+
+    toolBar.setFloatable(false);
+    toolBar.setBorder(new MatteBorder(0, 0, 1, 0, Color.GRAY));
+
+    return toolBar;
   }
 
   /**
@@ -240,6 +251,18 @@ public abstract class ApplicationFrame extends JFrame {
     return application.getName() + " " + application.getCurrentVersion();
   }
 
+  protected Optional<JMenu> getOptionsMenu() {
+    return this.hasMenuBar ? Optional.of(this.optionsMenu) : Optional.empty();
+  }
+
+  protected Optional<JMenu> getHelpMenu() {
+    return this.hasMenuBar ? Optional.of(this.helpMenu) : Optional.empty();
+  }
+
+  protected Optional<JToolBar> getToolBar() {
+    return this.hasToolBar ? Optional.of(this.toolBar) : Optional.empty();
+  }
+
   /**
    * @return the panel where all content should be added
    */
@@ -247,30 +270,22 @@ public abstract class ApplicationFrame extends JFrame {
     return this.contentPnl;
   }
 
-  protected JMenu getOptionsMenu() {
-    return this.optionsMenu;
-  }
-
-  protected JMenu getHelpMenu() {
-    return this.helpMenu;
-  }
-
-  protected StatusBar getStatusBar() {
-    return this.statusBar;
+  protected Optional<StatusBar> getStatusBar() {
+    return this.hasStatusBar ? Optional.of(this.statusBar) : Optional.empty();
   }
 
   /**
    * @return true if the check updates item is seleted
    */
   public boolean isCheckUpdatesItemSelected() {
-    return this.checkUpdatesItem.isSelected();
+    return this.hasMenuBar && this.checkUpdatesItem.isSelected();
   }
 
   /**
    * Sets the selection of the check updates item.
    */
   public void setCheckUpdatesItemSelected(boolean selected) {
-    if (ApplicationRegistry.getApplication().checkUpdates())
+    if (this.hasMenuBar && ApplicationRegistry.getApplication().checkUpdates())
       this.checkUpdatesItem.setSelected(selected);
   }
 
@@ -288,7 +303,7 @@ public abstract class ApplicationFrame extends JFrame {
    * @param str an optional string to append to the end of the status
    */
   public void setUpdateLabelText(int mode, @Nullable String str) {
-    if (!ApplicationRegistry.getApplication().checkUpdates())
+    if (this.updateLbl == null)
       return;
 
     Icon icon = null;

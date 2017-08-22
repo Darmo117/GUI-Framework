@@ -18,27 +18,42 @@
  */
 package net.darmo_creations.gui_framework;
 
+import java.awt.event.ActionListener;
+import java.util.Map;
+
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JToolBar;
 
 import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.controllers.ApplicationController;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
+import net.darmo_creations.gui_framework.util.ImagesUtil;
 
 public class TestFrame extends ApplicationFrame {
   private static final long serialVersionUID = -7892388146063580320L;
 
   public TestFrame(WritableConfig config) {
-    super(config, true, true, true, true);
+    super(config, true, true, true, false);
   }
 
   @Override
-  protected ApplicationController preInit(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean isFullyExtended) {
+  protected ApplicationController preInit(WritableConfig config) {
     return new ApplicationController(this, config);
   }
 
   @Override
-  protected void initContent(ApplicationController controller, WritableConfig config, boolean hasMenuBar, boolean hasToolBar,
-      boolean isFullyExtended) {
+  protected void initContent(ApplicationController controller, WritableConfig config) {
     getContentPanel().add(new JLabel("Label"));
+  }
+
+  @Override
+  protected JToolBar initJToolBar(Map<net.darmo_creations.gui_framework.events.UserEvent.Type, ActionListener> listeners) {
+    JToolBar bar = super.initJToolBar(listeners);
+
+    JButton b = new JButton(ImagesUtil.HELP);
+    bar.add(b);
+
+    return bar;
   }
 }
