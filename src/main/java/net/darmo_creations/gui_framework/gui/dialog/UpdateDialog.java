@@ -32,6 +32,7 @@ import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import net.darmo_creations.gui_framework.ApplicationRegistry;
 import net.darmo_creations.utils.I18n;
 import net.darmo_creations.utils.swing.dialog.AbstractDialog;
 import net.darmo_creations.utils.swing.dialog.DefaultDialogController;
@@ -82,7 +83,7 @@ public class UpdateDialog extends AbstractDialog {
    * @param changelog update's changelog
    */
   public void setInfo(Version version, String link, String changelog) {
-    String title = "Jenealogio " + version;
+    String title = ApplicationRegistry.getApplication().getName() + " " + version;
     String linkTitle = I18n.getLocalizedString("label.download_link.text");
     String listTitle = I18n.getLocalizedString("label.changelog.text");
     String html = String.format("<html><h1>%1$s</h1>%2$s<br /><a href=\"%3$s\">%3$s</a><h4>%4$s</h4>%5$s</html>", title, linkTitle, link,

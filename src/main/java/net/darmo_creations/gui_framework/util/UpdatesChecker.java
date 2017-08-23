@@ -59,7 +59,7 @@ import net.darmo_creations.utils.version.Version;
  * @author Damien Vergnet
  */
 public final class UpdatesChecker {
-  private static final Pattern TITLE_PATTERN = Pattern.compile("Jenealogio (\\d+\\.\\d+(?:\\.\\d+)?d?)");
+  private static final Pattern TITLE_PATTERN = Pattern.compile(" (\\d+\\.\\d+(?:\\.\\d+)?d?)$");
 
   private Version version;
   private String link, changelog;
@@ -139,7 +139,7 @@ public final class UpdatesChecker {
                 Node title = entry.getElementsByTagName("title").item(0);
                 Matcher m = TITLE_PATTERN.matcher(title.getTextContent());
 
-                if (m.matches()) {
+                if (m.find()) {
                   try {
                     Node link = entry.getElementsByTagName("link").item(0);
                     Node content = entry.getElementsByTagName("content").item(0);
