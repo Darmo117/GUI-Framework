@@ -42,22 +42,22 @@ public interface Application {
   ApplicationFrame initFrame(WritableConfig config);
 
   /**
-   * @return application's name
+   * Returns the application's name
    */
   String getName();
 
   /**
-   * @return application's current version
+   * Returns the application's current version
    */
   Version getCurrentVersion();
 
   /**
-   * @return the location inside the jar of the icons
+   * Returns the icons' location inside the jar
    */
   String getIconsLocation();
 
   /**
-   * Returns the imput stream to the language file corresponding to the given language.
+   * Returns the input stream to the language file corresponding to the given language.
    * 
    * @param language the language
    * @return the input stream
