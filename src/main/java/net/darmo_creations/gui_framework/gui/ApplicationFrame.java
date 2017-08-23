@@ -81,13 +81,16 @@ public abstract class ApplicationFrame extends JFrame {
 
   private Map<UserEvent.Type, ActionListener> listeners;
 
-  public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean hasStatusBar, boolean isFullyExtended) {
+  public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean hasStatusBar, boolean isFullyExtended,
+      Dimension minSize, boolean resizable) {
     ApplicationController controller = preInit(config);
     Application application = ApplicationRegistry.getApplication();
 
     setTitle(getBaseTitle());
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-    setMinimumSize(new Dimension(800, 600));
+    setResizable(resizable);
+    if (minSize != null)
+      setMinimumSize(minSize);
     if (application.getIcon().isPresent())
       setIconImage(ImagesUtil.getIcon(ApplicationRegistry.getApplication().getIcon().get()).getImage());
 

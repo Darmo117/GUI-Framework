@@ -18,6 +18,7 @@
  */
 package net.darmo_creations.gui_framework;
 
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class TestFrame extends ApplicationFrame {
   private static final long serialVersionUID = -7892388146063580320L;
 
   public TestFrame(WritableConfig config) {
-    super(config, true, true, true, false);
+    super(config, true, true, true, false, new Dimension(800, 600), true);
   }
 
   @Override
