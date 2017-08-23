@@ -16,16 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.darmo_creations.gui_framework.config;
+package net.darmo_creations.gui_framework.config.tags;
 
 /**
- * {@code ConfigKey}s are used by the {@code GlobalConfig} class.
+ * {@code ConfigTag}s are used by the {@code WritableConfig} class.
  * 
  * @author Damien Vergnet
  *
  * @param <T> the type of the associated values
  */
-public abstract class ConfigKey<T> {
+public abstract class AbstractTag<T> {
   private final String name;
   private final Class<T> valueClass;
 
@@ -34,7 +34,7 @@ public abstract class ConfigKey<T> {
    * 
    * @param name the name
    */
-  public ConfigKey(String name, Class<T> valueClass) {
+  public AbstractTag(String name, Class<T> valueClass) {
     this.name = name;
     this.valueClass = valueClass;
   }

@@ -58,6 +58,7 @@ public class Start {
       JOptionPane.showMessageDialog(null, I18n.getLocalizedString("popup.laf_error.text"), I18n.getLocalizedString("popup.laf_error.title"),
           JOptionPane.ERROR_MESSAGE);
     }
+
     ApplicationFrame frame = application.initFrame(config);
     frame.setVisible(true);
   }

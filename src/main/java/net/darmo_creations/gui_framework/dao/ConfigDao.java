@@ -39,9 +39,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import net.darmo_creations.gui_framework.ApplicationRegistry;
-import net.darmo_creations.gui_framework.config.ConfigKey;
-import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.config.Language;
+import net.darmo_creations.gui_framework.config.WritableConfig;
+import net.darmo_creations.gui_framework.config.tags.AbstractTag;
 import net.darmo_creations.utils.JarUtil;
 
 /**
@@ -88,9 +88,8 @@ public class ConfigDao {
           NodeList valuesList = valuesElm.getElementsByTagName("Value");
           for (int i = 0; i < valuesList.getLength(); i++) {
             Element valueElm = (Element) valuesList.item(i);
-            @SuppressWarnings("unchecked")
-            Class<ConfigKey<?>> keyClass = (Class<ConfigKey<?>>) Class.forName(valueElm.getAttribute("class"));
-            Optional<ConfigKey<?>> key = WritableConfig.getKeyFromName(valueElm.getAttribute("name"), keyClass);
+            Class<?> keyClass = Class.forName(valueElm.getAttribute("class"));
+            Optional<AbstractTag<?>> key = WritableConfig.getKeyFromName(valueElm.getAttribute("name"), keyClass.getName());
 
             if (key.isPresent()) {
               config.setValue(key.get(), key.get().deserializeValue(valueElm.getTextContent()));
@@ -123,9 +122,10 @@ public class ConfigDao {
       root.appendChild(locale);
 
       Element nodes = doc.createElement("Values");
-      for (ConfigKey<?> key : WritableConfig.getRegisteredKeys()) {
+      for (AbstractTag<?> key : WritableConfig.getRegisteredKeys()) {
         Element node = doc.createElement("Value");
         node.setAttribute("name", key.getName());
+        node.setAttribute("class", key.getValueClass().getName());
         node.appendChild(doc.createTextNode(key.serializeValue(config.getValue(key))));
         nodes.appendChild(node);
       }

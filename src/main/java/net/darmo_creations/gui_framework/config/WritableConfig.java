@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import net.darmo_creations.gui_framework.ApplicationRegistry;
+import net.darmo_creations.gui_framework.config.tags.AbstractTag;
 
 /**
  * This class is a default implementation for a config object.
@@ -33,7 +34,7 @@ import net.darmo_creations.gui_framework.ApplicationRegistry;
  * @author Damien Vergnet
  */
 public class WritableConfig implements Cloneable {
-  private static final Map<ConfigKey<?>, Object> DEFAULT_VALUES = new HashMap<>();
+  private static final Map<AbstractTag<?>, Object> DEFAULT_VALUES = new HashMap<>();
 
   /**
    * Registers a key and its default value. Values should be unmuttable to avoid side effects.
@@ -41,14 +42,14 @@ public class WritableConfig implements Cloneable {
    * @param key the key
    * @param defaultValue its default value
    */
-  public static <T> void registerKey(ConfigKey<T> key, T defaultValue) {
+  public static <T> void registerKey(AbstractTag<T> key, T defaultValue) {
     DEFAULT_VALUES.put(key, DEFAULT_VALUES);
   }
 
   /**
    * @return all registered keys
    */
-  public static Set<ConfigKey<?>> getRegisteredKeys() {
+  public static Set<AbstractTag<?>> getRegisteredKeys() {
     return new HashSet<>(DEFAULT_VALUES.keySet());
   }
 
@@ -59,8 +60,8 @@ public class WritableConfig implements Cloneable {
    * @return
    */
   @SuppressWarnings("unchecked")
-  public static <T extends ConfigKey<?>> Optional<T> getKeyFromName(String name, Class<T> type) {
-    return (Optional<T>) DEFAULT_VALUES.keySet().stream().filter(k -> k.getClass() == type).findFirst();
+  public static <T extends AbstractTag<?>> Optional<T> getKeyFromName(String name, String type) {
+    return (Optional<T>) DEFAULT_VALUES.keySet().stream().filter(k -> k.getValueClass().getName().equals(type)).findFirst();
   }
 
   /**
@@ -69,12 +70,12 @@ public class WritableConfig implements Cloneable {
    * @return
    */
   @SuppressWarnings("unchecked")
-  public static <T> T getDefaultValue(ConfigKey<T> key) {
+  public static <T> T getDefaultValue(AbstractTag<T> key) {
     return key == null ? null : (T) DEFAULT_VALUES.get(key);
   }
 
   private Language language;
-  private Map<ConfigKey<?>, Object> map;
+  private Map<AbstractTag<?>, Object> map;
 
   /**
    * Creates a config with default values for all properties.
@@ -82,7 +83,7 @@ public class WritableConfig implements Cloneable {
   public WritableConfig() {
     setLanguage(ApplicationRegistry.getDefaultLanguage());
     this.map = new HashMap<>(DEFAULT_VALUES);
-    setValue(DefaultConfigKeys.CHECK_UPDATES, true);
+    setValue(DefaultConfigTags.CHECK_UPDATES, true);
   }
 
   /**
@@ -109,7 +110,7 @@ public class WritableConfig implements Cloneable {
    * @return the value or null
    */
   @SuppressWarnings("unchecked")
-  public <T> T getValue(ConfigKey<T> key) {
+  public <T> T getValue(AbstractTag<T> key) {
     return key == null ? null : (T) this.map.get(key);
   }
 
@@ -120,7 +121,7 @@ public class WritableConfig implements Cloneable {
    * @param value the associated value
    * @throws ClassCastException if the value is not null and not of type T
    */
-  public <T> void setValue(ConfigKey<T> key, Object value) {
+  public <T> void setValue(AbstractTag<T> key, Object value) {
     if (value != null && key.getValueClass() != value.getClass())
       throw new ClassCastException("expected type was " + key.getValueClass() + " but actual type was " + value.getClass());
     this.map.put(key, value);

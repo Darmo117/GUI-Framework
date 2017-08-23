@@ -16,32 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.darmo_creations.gui_framework.config;
+package net.darmo_creations.gui_framework.config.tags;
 
 /**
- * This type of keys is associated with boolean values.
+ * This type of tags is associated with long integer values.
  *
  * @author Damien Vergnet
  */
-public final class BooleanConfigKey extends ConfigKey<Boolean> {
-  public BooleanConfigKey(String name) {
-    super(name, Boolean.class);
+public final class LongTag extends AbstractTag<Long> {
+  public LongTag(String name) {
+    super(name, Long.class);
   }
 
   @Override
-  public String serializeValueGeneric(Boolean value) {
+  public String serializeValueGeneric(Long value) {
     return "" + value;
   }
 
   @Override
-  public Boolean deserializeValue(String value) {
-    switch (value) {
-      case "true":
-        return true;
-      case "false":
-        return false;
-      default:
-        return null;
+  public Long deserializeValue(String value) {
+    try {
+      return Long.parseLong(value);
+    }
+    catch (NumberFormatException ex) {
+      return null;
     }
   }
 }

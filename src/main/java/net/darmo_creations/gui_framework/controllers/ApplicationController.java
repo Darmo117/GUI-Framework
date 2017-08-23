@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
 
 import net.darmo_creations.gui_framework.Application;
 import net.darmo_creations.gui_framework.ApplicationRegistry;
-import net.darmo_creations.gui_framework.config.DefaultConfigKeys;
+import net.darmo_creations.gui_framework.config.DefaultConfigTags;
 import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.dao.ConfigDao;
 import net.darmo_creations.gui_framework.events.ChangeLanguageEvent;
@@ -71,7 +71,7 @@ public class ApplicationController {
    * Initializes the controller.
    */
   public void init() {
-    this.frame.setCheckUpdatesItemSelected(this.config.getValue(DefaultConfigKeys.CHECK_UPDATES));
+    this.frame.setCheckUpdatesItemSelected(this.config.getValue(DefaultConfigTags.CHECK_UPDATES));
     this.frame.setUpdateLabelText(ApplicationFrame.CHECKING_UPDATES, null);
     this.updatesChecker.checkUpdate();
   }
@@ -134,7 +134,7 @@ public class ApplicationController {
 
   @SubsribeEvent
   public void onUpdateChecking(UpdateEvent.Checking e) {
-    if (!this.checkUpdatesEnabled || !this.config.getValue(DefaultConfigKeys.CHECK_UPDATES)) {
+    if (!this.checkUpdatesEnabled || !this.config.getValue(DefaultConfigTags.CHECK_UPDATES)) {
       this.frame.setUpdateLabelText(ApplicationFrame.UPDATES_BLOCKED, null);
       e.setCanceled();
     }
@@ -183,7 +183,7 @@ public class ApplicationController {
    */
   private void toggleCheckUpdates() {
     boolean checked = this.frame.isCheckUpdatesItemSelected();
-    this.config.setValue(DefaultConfigKeys.CHECK_UPDATES, checked);
+    this.config.setValue(DefaultConfigTags.CHECK_UPDATES, checked);
     if (checked) {
       this.frame.setUpdateLabelText(ApplicationFrame.CHECKING_UPDATES, null);
       this.updatesChecker.checkUpdate();

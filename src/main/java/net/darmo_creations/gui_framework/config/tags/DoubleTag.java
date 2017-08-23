@@ -16,20 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.darmo_creations.gui_framework.config;
+package net.darmo_creations.gui_framework.config.tags;
 
 /**
- * This class provides config keys used by the framework.
+ * This type of tags is associated with double values.
  *
  * @author Damien Vergnet
  */
-public final class DefaultConfigKeys {
-  /** Key to check or not updates */
-  public static final BooleanConfigKey CHECK_UPDATES = new BooleanConfigKey("check_updates");
-
-  static {
-    WritableConfig.registerKey(CHECK_UPDATES, true);
+public final class DoubleTag extends AbstractTag<Double> {
+  public DoubleTag(String name) {
+    super(name, Double.class);
   }
 
-  private DefaultConfigKeys() {}
+  @Override
+  public String serializeValueGeneric(Double value) {
+    return "" + value;
+  }
+
+  @Override
+  public Double deserializeValue(String value) {
+    try {
+      return Double.parseDouble(value);
+    }
+    catch (NumberFormatException ex) {
+      return null;
+    }
+  }
 }
