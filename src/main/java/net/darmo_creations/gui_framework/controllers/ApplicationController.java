@@ -46,13 +46,13 @@ import net.darmo_creations.utils.events.SubsribeEvent;
  * @author Damien Vergnet
  */
 public class ApplicationController {
-  private final ApplicationFrame frame;
+  protected final ApplicationFrame frame;
 
-  private WritableConfig config;
+  protected final WritableConfig config;
   /** Updates checker */
-  private UpdatesChecker updatesChecker;
+  protected final UpdatesChecker updatesChecker;
 
-  private boolean checkUpdatesEnabled;
+  protected final boolean checkUpdatesEnabled;
 
   /**
    * Creates an application controller.
