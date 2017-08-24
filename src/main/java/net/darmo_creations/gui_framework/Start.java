@@ -59,6 +59,8 @@ public class Start {
           JOptionPane.ERROR_MESSAGE);
     }
 
+    application.preInit(config);
+
     ApplicationFrame frame = application.initFrame(config);
     frame.setVisible(true);
   }

@@ -79,11 +79,11 @@ public abstract class ApplicationFrame extends JFrame {
 
   protected final boolean hasMenuBar, hasToolBar, hasStatusBar;
 
-  private Map<UserEvent.Type, ActionListener> listeners;
+  protected final Map<UserEvent.Type, ActionListener> listeners;
 
   public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean hasStatusBar, boolean isFullyExtended,
       Dimension minSize, boolean resizable) {
-    ApplicationController controller = preInit(config);
+    ApplicationController<?> controller = preInit(config);
     Application application = ApplicationRegistry.getApplication();
 
     setTitle(getBaseTitle());
@@ -165,12 +165,12 @@ public abstract class ApplicationFrame extends JFrame {
    * 
    * @return the application controller
    */
-  protected abstract ApplicationController preInit(WritableConfig config);
+  protected abstract ApplicationController<?> preInit(WritableConfig config);
 
   /**
    * The frame's content must be initialized in this method.
    */
-  protected abstract void initContent(ApplicationController controller, WritableConfig config);
+  protected abstract void initContent(ApplicationController<?> controller, WritableConfig config);
 
   /**
    * Initializes the menu bar.

@@ -45,13 +45,14 @@ import net.darmo_creations.utils.events.SubsribeEvent;
  * 
  * @author Damien Vergnet
  */
-public class ApplicationController {
-  protected final ApplicationFrame frame;
-
+public class ApplicationController<T extends ApplicationFrame> {
+  /** The frame */
+  protected final T frame;
+  /** The configuration */
   protected final WritableConfig config;
   /** Updates checker */
   protected final UpdatesChecker updatesChecker;
-
+  /** If true updates checking is enabled */
   protected final boolean checkUpdatesEnabled;
 
   /**
@@ -60,7 +61,7 @@ public class ApplicationController {
    * @param frame the frame
    * @param config the configuration
    */
-  public ApplicationController(ApplicationFrame frame, WritableConfig config) {
+  public ApplicationController(T frame, WritableConfig config) {
     this.frame = frame;
     this.config = config;
     this.checkUpdatesEnabled = ApplicationRegistry.getApplication().checkUpdates();
@@ -196,7 +197,7 @@ public class ApplicationController {
    * 
    * @return true if the application exited; false otherwise
    */
-  private boolean exit() {
+  protected boolean exit() {
     UserEvent event = new UserEvent(UserEvent.DefaultType.EXIT);
     ApplicationRegistry.EVENTS_BUS.dispatchEvent(event);
 
