@@ -64,7 +64,7 @@ import net.darmo_creations.utils.version.Version;
  *
  * @author Damien Vergnet
  */
-public abstract class ApplicationFrame extends JFrame {
+public abstract class ApplicationFrame<T extends ApplicationController<?>> extends JFrame {
   private static final long serialVersionUID = 2426665404072947885L;
 
   private AboutDialog aboutDialog;
@@ -83,7 +83,7 @@ public abstract class ApplicationFrame extends JFrame {
 
   public ApplicationFrame(WritableConfig config, boolean hasMenuBar, boolean hasToolBar, boolean hasStatusBar, boolean isFullyExtended,
       Dimension minSize, boolean resizable) {
-    ApplicationController<?> controller = preInit(config);
+    T controller = preInit(config);
     Application application = ApplicationRegistry.getApplication();
 
     setTitle(getBaseTitle());
@@ -163,14 +163,14 @@ public abstract class ApplicationFrame extends JFrame {
   /**
    * Called before the frame is initialized.
    * 
-   * @return the application controller
+   * @return the application's controller
    */
-  protected abstract ApplicationController<?> preInit(WritableConfig config);
+  protected abstract T preInit(WritableConfig config);
 
   /**
    * The frame's content must be initialized in this method.
    */
-  protected abstract void initContent(ApplicationController<?> controller, WritableConfig config);
+  protected abstract void initContent(T controller, WritableConfig config);
 
   /**
    * Initializes the menu bar.

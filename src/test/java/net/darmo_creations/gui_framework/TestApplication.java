@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import net.darmo_creations.gui_framework.config.Language;
 import net.darmo_creations.gui_framework.config.WritableConfig;
+import net.darmo_creations.gui_framework.controllers.ApplicationController;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.utils.version.Version;
 
@@ -31,7 +32,10 @@ public class TestApplication implements Application {
   private static final Version VERSION = new Version(1, 0, 0, false);
 
   @Override
-  public ApplicationFrame initFrame(WritableConfig config) {
+  public void preInit(WritableConfig config) {}
+
+  @Override
+  public ApplicationFrame<ApplicationController<TestFrame>> initFrame(WritableConfig config) {
     return new TestFrame(config);
   }
 

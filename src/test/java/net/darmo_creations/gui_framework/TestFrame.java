@@ -31,7 +31,7 @@ import net.darmo_creations.gui_framework.controllers.ApplicationController;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.gui_framework.util.ImagesUtil;
 
-public class TestFrame extends ApplicationFrame {
+public class TestFrame extends ApplicationFrame<ApplicationController<TestFrame>> {
   private static final long serialVersionUID = -7892388146063580320L;
 
   public TestFrame(WritableConfig config) {
@@ -39,12 +39,12 @@ public class TestFrame extends ApplicationFrame {
   }
 
   @Override
-  protected ApplicationController preInit(WritableConfig config) {
-    return new ApplicationController(this, config);
+  protected ApplicationController<TestFrame> preInit(WritableConfig config) {
+    return new ApplicationController<TestFrame>(this, config);
   }
 
   @Override
-  protected void initContent(ApplicationController controller, WritableConfig config) {
+  protected void initContent(ApplicationController<TestFrame> controller, WritableConfig config) {
     getContentPanel().add(new JLabel("Label"));
   }
 
