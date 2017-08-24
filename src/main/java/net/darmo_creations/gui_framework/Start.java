@@ -41,6 +41,8 @@ public class Start {
    */
   public static void run() {
     Application application = ApplicationRegistry.getApplication();
+    application.preInit();
+
     WritableConfig config = ConfigDao.getInstance().load();
 
     try {
@@ -58,8 +60,6 @@ public class Start {
       JOptionPane.showMessageDialog(null, I18n.getLocalizedString("popup.laf_error.text"), I18n.getLocalizedString("popup.laf_error.title"),
           JOptionPane.ERROR_MESSAGE);
     }
-
-    application.preInit(config);
 
     ApplicationFrame<?> frame = application.initFrame(config);
     frame.setVisible(true);

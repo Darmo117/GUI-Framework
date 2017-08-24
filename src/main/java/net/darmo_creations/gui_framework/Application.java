@@ -34,11 +34,9 @@ import net.darmo_creations.utils.version.Version;
  */
 public interface Application {
   /**
-   * This method is called before {@link #initFrame(WritableConfig)}.
-   * 
-   * @param config the configuration
+   * This method is called before any other from this class.
    */
-  void preInit(WritableConfig config);
+  void preInit();
 
   /**
    * The application's main frame must be initialized in this method.
