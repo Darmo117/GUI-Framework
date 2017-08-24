@@ -89,7 +89,7 @@ public class ConfigDao {
           for (int i = 0; i < valuesList.getLength(); i++) {
             Element valueElm = (Element) valuesList.item(i);
             Class<?> keyClass = Class.forName(valueElm.getAttribute("class"));
-            Optional<AbstractTag<?>> key = WritableConfig.getKeyFromName(valueElm.getAttribute("name"), keyClass.getName());
+            Optional<AbstractTag<?>> key = WritableConfig.getTagFromName(valueElm.getAttribute("name"), keyClass.getName());
 
             if (key.isPresent()) {
               config.setValue(key.get(), key.get().deserializeValue(valueElm.getTextContent()));
@@ -122,7 +122,7 @@ public class ConfigDao {
       root.appendChild(locale);
 
       Element nodes = doc.createElement("Values");
-      for (AbstractTag<?> key : WritableConfig.getRegisteredKeys()) {
+      for (AbstractTag<?> key : WritableConfig.getRegisteredTags()) {
         Element node = doc.createElement("Value");
         node.setAttribute("name", key.getName());
         node.setAttribute("class", key.getValueClass().getName());

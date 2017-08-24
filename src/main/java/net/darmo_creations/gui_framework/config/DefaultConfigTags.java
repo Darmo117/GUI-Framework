@@ -30,7 +30,7 @@ public final class DefaultConfigTags {
   public static final BooleanTag CHECK_UPDATES = new BooleanTag("check_updates");
 
   static {
-    WritableConfig.registerKey(CHECK_UPDATES, true);
+    WritableConfig.registerTag(CHECK_UPDATES, true);
   }
 
   private DefaultConfigTags() {}

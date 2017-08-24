@@ -29,7 +29,7 @@ import net.darmo_creations.gui_framework.ApplicationRegistry;
 import net.darmo_creations.gui_framework.config.tags.AbstractTag;
 
 /**
- * This class is a default implementation for a config object.
+ * This config class is used to associate values to tags as well as default values.
  *
  * @author Damien Vergnet
  */
@@ -37,41 +37,43 @@ public class WritableConfig implements Cloneable {
   private static final Map<AbstractTag<?>, Object> DEFAULT_VALUES = new HashMap<>();
 
   /**
-   * Registers a key and its default value. Values should be unmuttable to avoid side effects.
+   * Registers a tag and its default value. Values should be unmodifiable to avoid side effects.
    * 
-   * @param key the key
+   * @param tag the tag
    * @param defaultValue its default value
    */
-  public static <T> void registerKey(AbstractTag<T> key, T defaultValue) {
-    DEFAULT_VALUES.put(key, DEFAULT_VALUES);
+  public static <T> void registerTag(AbstractTag<T> tag, T defaultValue) {
+    DEFAULT_VALUES.put(tag, defaultValue);
   }
 
   /**
-   * @return all registered keys
+   * Returns all registered tags.
    */
-  public static Set<AbstractTag<?>> getRegisteredKeys() {
+  public static Set<AbstractTag<?>> getRegisteredTags() {
     return new HashSet<>(DEFAULT_VALUES.keySet());
   }
 
   /**
+   * Returns the tag corresponding to the given name and class name.
    * 
-   * @param name
-   * @param type
+   * @param name the name
+   * @param type the class name
    * @return
    */
   @SuppressWarnings("unchecked")
-  public static <T extends AbstractTag<?>> Optional<T> getKeyFromName(String name, String type) {
+  public static <T extends AbstractTag<?>> Optional<T> getTagFromName(String name, String type) {
     return (Optional<T>) DEFAULT_VALUES.keySet().stream().filter(k -> k.getValueClass().getName().equals(type)).findFirst();
   }
 
   /**
+   * Returns the default value for the given tag.
    * 
-   * @param key
+   * @param tag
    * @return
    */
   @SuppressWarnings("unchecked")
-  public static <T> T getDefaultValue(AbstractTag<T> key) {
-    return key == null ? null : (T) DEFAULT_VALUES.get(key);
+  public static <T> T getDefaultValue(AbstractTag<T> tag) {
+    return tag == null ? null : (T) DEFAULT_VALUES.get(tag);
   }
 
   private Language language;
@@ -106,25 +108,25 @@ public class WritableConfig implements Cloneable {
    * Returns the value for the given key. If the key is null or no value was found, null is
    * returned.
    * 
-   * @param key the key
+   * @param tag the key
    * @return the value or null
    */
   @SuppressWarnings("unchecked")
-  public <T> T getValue(AbstractTag<T> key) {
-    return key == null ? null : (T) this.map.get(key);
+  public <T> T getValue(AbstractTag<T> tag) {
+    return tag == null ? null : (T) this.map.get(tag);
   }
 
   /**
-   * Sets the value for the given key.
+   * Sets the value for the given tag.
    * 
-   * @param key the key
+   * @param tag the tag
    * @param value the associated value
    * @throws ClassCastException if the value is not null and not of type T
    */
-  public <T> void setValue(AbstractTag<T> key, Object value) {
-    if (value != null && key.getValueClass() != value.getClass())
-      throw new ClassCastException("expected type was " + key.getValueClass() + " but actual type was " + value.getClass());
-    this.map.put(key, value);
+  public <T> void setValue(AbstractTag<T> tag, Object value) {
+    if (value != null && tag.getValueClass() != value.getClass())
+      throw new ClassCastException("expected type was " + tag.getValueClass() + " but actual type was " + value.getClass());
+    this.map.put(tag, value);
   }
 
   /**
