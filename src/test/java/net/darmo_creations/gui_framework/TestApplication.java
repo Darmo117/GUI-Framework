@@ -32,7 +32,7 @@ public class TestApplication implements Application {
   private static final Version VERSION = new Version(1, 0, 0, false);
 
   @Override
-  public void preInit(WritableConfig config) {}
+  public void preInit() {}
 
   @Override
   public ApplicationFrame<ApplicationController<TestFrame>> initFrame(WritableConfig config) {
