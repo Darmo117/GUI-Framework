@@ -61,7 +61,7 @@ public class Start {
 
     application.preInit(config);
 
-    ApplicationFrame frame = application.initFrame(config);
+    ApplicationFrame<?> frame = application.initFrame(config);
     frame.setVisible(true);
   }
 }

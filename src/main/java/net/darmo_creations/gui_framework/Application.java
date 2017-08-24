@@ -46,7 +46,7 @@ public interface Application {
    * @param config the configuration
    * @return the main frame
    */
-  ApplicationFrame initFrame(WritableConfig config);
+  ApplicationFrame<?> initFrame(WritableConfig config);
 
   /**
    * Returns the application's name

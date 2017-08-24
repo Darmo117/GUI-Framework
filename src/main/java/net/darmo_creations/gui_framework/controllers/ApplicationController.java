@@ -45,7 +45,7 @@ import net.darmo_creations.utils.events.SubsribeEvent;
  * 
  * @author Damien Vergnet
  */
-public class ApplicationController<T extends ApplicationFrame> {
+public class ApplicationController<T extends ApplicationFrame<?>> {
   /** The frame */
   protected final T frame;
   /** The configuration */
