@@ -36,30 +36,49 @@ public final class ApplicationRegistry {
   /** Application's main event bus */
   public static final EventsBus EVENTS_BUS = new EventsBus();
 
+  private static Class<? extends Application> applicationClass;
   private static Application application;
 
   /**
-   * Registers the application.
+   * Registers the application. The registered application must have a visible constructor with no
+   * arguments.
    * 
-   * @param application
+   * @param applicationClass the application's class
    */
-  public static void registerApplication(Application app) {
-    application = Objects.requireNonNull(app);
+  public static void registerApplication(Class<? extends Application> applicationClass) {
+    applicationClass = Objects.requireNonNull(applicationClass);
   }
 
   /**
+   * Starts the application and returns the instance.
+   */
+  static Application startApplication() {
+    if (applicationClass == null)
+      throw new IllegalStateException("no application class registered");
+    try {
+      application = applicationClass.newInstance();
+      return application;
+    }
+    catch (InstantiationException | IllegalAccessException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
+  /**
+   * Returns the application.
+   * 
    * @return the registered application
    * @throws IllegalStateException if no application has been registered
+   * @see ApplicationRegistry#registerApplication(Class)
    */
   public static Application getApplication() {
     if (application == null)
-      throw new IllegalStateException("no application registered");
+      throw new IllegalStateException("application not started");
     return application;
   }
 
   /** List of available languages */
   private static List<Language> languages;
-  /** Default language */
   private static Language defaultLanguage;
 
   /**

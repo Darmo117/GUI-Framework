@@ -31,7 +31,7 @@ public class Test {
     l.add(new Language("Français", Locale.FRANCE));
 
     ApplicationRegistry.setLanguages(l);
-    ApplicationRegistry.registerApplication(new TestApplication());
+    ApplicationRegistry.registerApplication(TestApplication.class);
     GuiFramework.run();
   }
 }

@@ -37,10 +37,10 @@ import net.darmo_creations.utils.I18n;
  */
 public class GuiFramework {
   /**
-   * Starts the application.
+   * Starts the framework.
    */
   public static void run() {
-    Application application = ApplicationRegistry.getApplication();
+    Application application = ApplicationRegistry.startApplication();
     application.preInit();
 
     WritableConfig config = ConfigDao.getInstance().load();
