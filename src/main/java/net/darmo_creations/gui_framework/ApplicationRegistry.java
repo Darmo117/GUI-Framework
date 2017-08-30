@@ -46,7 +46,7 @@ public final class ApplicationRegistry {
    * @param applicationClass the application's class
    */
   public static void registerApplication(Class<? extends Application> applicationClass) {
-    applicationClass = Objects.requireNonNull(applicationClass);
+    ApplicationRegistry.applicationClass = Objects.requireNonNull(applicationClass);
   }
 
   /**
