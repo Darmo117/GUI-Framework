@@ -18,6 +18,8 @@
  */
 package net.darmo_creations.gui_framework.config.tags;
 
+import java.util.Objects;
+
 /**
  * {@code ConfigTag}s are used by the {@code WritableConfig} class.
  * 
@@ -35,8 +37,8 @@ public abstract class AbstractTag<T> {
    * @param name the name
    */
   public AbstractTag(String name, Class<T> valueClass) {
-    this.name = name;
-    this.valueClass = valueClass;
+    this.name = Objects.requireNonNull(name);
+    this.valueClass = Objects.requireNonNull(valueClass);
   }
 
   /**
@@ -51,6 +53,26 @@ public abstract class AbstractTag<T> {
    */
   public final Class<T> getValueClass() {
     return this.valueClass;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+
+    result = prime * result + this.name.hashCode();
+    result = prime * result + this.valueClass.hashCode();
+
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof AbstractTag<?>) {
+      AbstractTag<?> t = (AbstractTag<?>) o;
+      return t.getName().equals(getName()) && t.getValueClass() == getValueClass();
+    }
+    return false;
   }
 
   /**

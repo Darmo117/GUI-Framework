@@ -62,7 +62,8 @@ public class WritableConfig implements Cloneable {
    */
   @SuppressWarnings("unchecked")
   public static <T extends AbstractTag<?>> Optional<T> getTagFromName(String name, String type) {
-    return (Optional<T>) DEFAULT_VALUES.keySet().stream().filter(k -> k.getValueClass().getName().equals(type)).findFirst();
+    return (Optional<T>) DEFAULT_VALUES.keySet().stream().filter(
+        k -> k.getName().equals(name) && k.getValueClass().getName().equals(type)).findFirst();
   }
 
   /**
