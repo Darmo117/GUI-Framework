@@ -45,13 +45,7 @@ public class GuiFramework {
 
     WritableConfig config = ConfigDao.getInstance().load();
 
-    try {
-      I18n.init(application.getLanguageFilesStream(config.getLanguage()));
-    }
-    catch (IOException ex) {
-      JOptionPane.showMessageDialog(null, "Could not load language file!", "Error", JOptionPane.ERROR_MESSAGE);
-      System.exit(1);
-    }
+    setLanguage(application, config, false);
 
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -63,5 +57,24 @@ public class GuiFramework {
 
     ApplicationFrame<?> frame = application.initFrame(config);
     frame.setVisible(true);
+  }
+
+  private static void setLanguage(Application application, WritableConfig config, boolean error) {
+    try {
+      I18n.init(application.getLanguageFilesStream(config.getLanguage()));
+    }
+    catch (NullPointerException | IOException ex) {
+      if (error) {
+        JOptionPane.showMessageDialog(null, "Could not load default language file! This application will now exit.", "Error",
+            JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
+      }
+      else {
+        JOptionPane.showMessageDialog(null, "Could not load language file! Swithing to default language.", "Error",
+            JOptionPane.ERROR_MESSAGE);
+        config.setLanguage(ApplicationRegistry.getDefaultLanguage());
+        setLanguage(application, config, true);
+      }
+    }
   }
 }
