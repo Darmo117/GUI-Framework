@@ -30,12 +30,12 @@ import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.utils.I18n;
 
 /**
- * The main method from the application must call Start.run() after it has been registered to the
- * {@code ApplicationRegistry}.
+ * The main method from the application must call {@code GuiFramework.run()} after it has been
+ * registered to the {@code ApplicationRegistry}.
  *
  * @author Damien Vergnet
  */
-public class Start {
+public class GuiFramework {
   /**
    * Starts the application.
    */

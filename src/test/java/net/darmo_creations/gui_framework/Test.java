@@ -32,6 +32,6 @@ public class Test {
 
     ApplicationRegistry.setLanguages(l);
     ApplicationRegistry.registerApplication(new TestApplication());
-    Start.run();
+    GuiFramework.run();
   }
 }
