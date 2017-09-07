@@ -19,6 +19,9 @@
 package net.darmo_creations.gui_framework;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import net.darmo_creations.gui_framework.config.Language;
@@ -31,8 +34,15 @@ public class TestApplication implements Application {
   private static final String NAME = "Test App";
   private static final Version VERSION = new Version(1, 0, 0, false);
 
+  // "/net/darmo_creations/gui_framework/assets/icons/"
   @Override
-  public void preInit() {}
+  public void preInit() {
+    List<Language> l = new ArrayList<>();
+    l.add(new Language("English", Locale.US));
+    l.add(new Language("Français", Locale.FRANCE));
+
+    ApplicationRegistry.setLanguages(l);
+  }
 
   @Override
   public ApplicationFrame<ApplicationController<TestFrame>> initFrame(WritableConfig config) {
@@ -47,11 +57,6 @@ public class TestApplication implements Application {
   @Override
   public Version getCurrentVersion() {
     return VERSION;
-  }
-
-  @Override
-  public String getIconsLocation() {
-    return "/net/darmo_creations/gui_framework/assets/icons/";
   }
 
   @Override

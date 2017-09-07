@@ -39,7 +39,8 @@ public class GuiFramework {
   /**
    * Starts the framework.
    */
-  public static void run() {
+  public static void run(Class<? extends Application> appClass) {
+    ApplicationRegistry.registerApplication(appClass);
     Application application = ApplicationRegistry.startApplication();
     application.preInit();
 

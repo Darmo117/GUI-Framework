@@ -18,20 +18,8 @@
  */
 package net.darmo_creations.gui_framework;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import net.darmo_creations.gui_framework.config.Language;
-
 public class Test {
   public static void main(String[] args) {
-    List<Language> l = new ArrayList<>();
-    l.add(new Language("English", Locale.US));
-    l.add(new Language("Français", Locale.FRANCE));
-
-    ApplicationRegistry.setLanguages(l);
-    ApplicationRegistry.registerApplication(TestApplication.class);
-    GuiFramework.run();
+    GuiFramework.run(TestApplication.class);
   }
 }

@@ -201,7 +201,7 @@ public abstract class ApplicationFrame<T extends ApplicationController<?>> exten
       for (Language l : ApplicationRegistry.getLanguages()) {
         langMenu.add(i = new JRadioButtonMenuItem(l.getName()));
         i.setSelected(l == config.getLanguage());
-        i.setIcon(ImagesUtil.getIcon(application.getIconsLocation() + "flag-" + l.getCode() + ".png"));
+        i.setIcon(ImagesUtil.getIcon(Application.ICONS_LOCATION + "flag-" + l.getCode() + ".png"));
         i.addActionListener(e -> ApplicationRegistry.EVENTS_BUS.dispatchEvent(new ChangeLanguageEvent(l)));
         bg.add(i);
       }

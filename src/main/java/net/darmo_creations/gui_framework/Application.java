@@ -33,6 +33,8 @@ import net.darmo_creations.utils.version.Version;
  * @author Damien Vergnet
  */
 public interface Application {
+  public static final String ICONS_LOCATION = "/assets/icons/";
+
   /**
    * This method is called before any other from this class.
    */
@@ -55,11 +57,6 @@ public interface Application {
    * Returns the application's current version
    */
   Version getCurrentVersion();
-
-  /**
-   * Returns the icons' location inside the jar
-   */
-  String getIconsLocation();
 
   /**
    * Returns the input stream to the language file corresponding to the given language.
