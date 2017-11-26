@@ -38,7 +38,7 @@ import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.gui_framework.util.UpdatesChecker;
 import net.darmo_creations.utils.I18n;
 import net.darmo_creations.utils.JarUtil;
-import net.darmo_creations.utils.events.SubsribeEvent;
+import net.darmo_creations.utils.events.SubscribeEvent;
 
 /**
  * This is controller handles events from the MainFrame class.
@@ -83,7 +83,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
    * @param e the event
    */
   @SuppressWarnings("incomplete-switch")
-  @SubsribeEvent
+  @SubscribeEvent
   public void onUserEvent(UserEvent e) {
     if (e.isCanceled()) {
       return;
@@ -117,7 +117,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
    * 
    * @param e the event
    */
-  @SubsribeEvent
+  @SubscribeEvent
   public void onChangeLanguage(ChangeLanguageEvent e) {
     int choice = this.frame.showConfirmDialog(I18n.getLocalizedString("popup.change_language.confirm.text"));
 
@@ -133,7 +133,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
     }
   }
 
-  @SubsribeEvent
+  @SubscribeEvent
   public void onUpdateChecking(UpdateEvent.Checking e) {
     if (!this.checkUpdatesEnabled || !this.config.getValue(DefaultConfigTags.CHECK_UPDATES)) {
       this.frame.setUpdateLabelText(ApplicationFrame.UPDATES_BLOCKED, null);
@@ -141,18 +141,18 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
     }
   }
 
-  @SubsribeEvent
+  @SubscribeEvent
   public void onNewUpdate(UpdateEvent.NewUpdate e) {
     Application application = ApplicationRegistry.getApplication();
     this.frame.setUpdateLabelText(ApplicationFrame.NEW_UPDATE, " - " + application.getName() + " " + e.getVersion());
   }
 
-  @SubsribeEvent
+  @SubscribeEvent
   public void onNoUpdate(UpdateEvent.NoUpdate e) {
     this.frame.setUpdateLabelText(ApplicationFrame.NO_UPDATE, null);
   }
 
-  @SubsribeEvent
+  @SubscribeEvent
   public void onUpdateCheckFailed(UpdateEvent.CheckFailed e) {
     this.frame.setUpdateLabelText(ApplicationFrame.UPDATES_CHECK_FAILED, null);
   }
