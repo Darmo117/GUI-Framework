@@ -136,7 +136,7 @@ public class WritableConfig implements Cloneable {
    * @return true if the current value is not the default; false otherwise
    */
   public boolean isModified(AbstractTag<?> tag) {
-    return this.values.get(tag).equals(DEFAULT_VALUES.get(tag));
+    return !this.values.get(tag).equals(DEFAULT_VALUES.get(tag));
   }
 
   /**

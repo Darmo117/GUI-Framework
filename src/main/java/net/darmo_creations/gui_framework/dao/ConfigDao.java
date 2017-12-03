@@ -123,11 +123,13 @@ public class ConfigDao {
 
       Element nodes = doc.createElement("Values");
       for (AbstractTag<?> key : WritableConfig.getRegisteredTags()) {
-        Element node = doc.createElement("Value");
-        node.setAttribute("name", key.getName());
-        node.setAttribute("class", key.getValueClass().getName());
-        node.appendChild(doc.createTextNode(key.serializeValue(config.getValue(key))));
-        nodes.appendChild(node);
+        if (config.isModified(key)) {
+          Element node = doc.createElement("Value");
+          node.setAttribute("name", key.getName());
+          node.setAttribute("class", key.getValueClass().getName());
+          node.appendChild(doc.createTextNode(key.serializeValue(config.getValue(key))));
+          nodes.appendChild(node);
+        }
       }
       root.appendChild(nodes);
 
