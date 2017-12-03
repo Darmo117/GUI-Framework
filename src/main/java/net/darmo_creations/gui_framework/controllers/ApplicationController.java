@@ -64,7 +64,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
   public ApplicationController(T frame, WritableConfig config) {
     this.frame = frame;
     this.config = config;
-    this.checkUpdatesEnabled = ApplicationRegistry.getApplication().checkUpdates();
+    this.checkUpdatesEnabled = this.config.getValue(DefaultConfigTags.CHECK_UPDATES);
     this.updatesChecker = new UpdatesChecker();
   }
 

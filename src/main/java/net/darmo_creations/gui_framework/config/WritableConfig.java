@@ -78,15 +78,14 @@ public class WritableConfig implements Cloneable {
   }
 
   private Language language;
-  private Map<AbstractTag<?>, Object> map;
+  private Map<AbstractTag<?>, Object> values;
 
   /**
    * Creates a config with default values for all properties.
    */
   public WritableConfig() {
     setLanguage(ApplicationRegistry.getDefaultLanguage());
-    this.map = new HashMap<>(DEFAULT_VALUES);
-    setValue(DefaultConfigTags.CHECK_UPDATES, true);
+    this.values = new HashMap<>(DEFAULT_VALUES);
   }
 
   /**
@@ -114,7 +113,7 @@ public class WritableConfig implements Cloneable {
    */
   @SuppressWarnings("unchecked")
   public <T> T getValue(AbstractTag<T> tag) {
-    return tag == null ? null : (T) this.map.get(tag);
+    return tag == null ? null : (T) this.values.get(tag);
   }
 
   /**
@@ -127,7 +126,17 @@ public class WritableConfig implements Cloneable {
   public <T> void setValue(AbstractTag<T> tag, Object value) {
     if (value != null && tag.getValueClass() != value.getClass())
       throw new ClassCastException("expected type was " + tag.getValueClass() + " but actual type was " + value.getClass());
-    this.map.put(tag, value);
+    this.values.put(tag, value);
+  }
+
+  /**
+   * Tells if the given tag has been modified.
+   * 
+   * @param tag the tag
+   * @return true if the current value is not the default; false otherwise
+   */
+  public boolean isModified(AbstractTag<?> tag) {
+    return this.values.get(tag).equals(DEFAULT_VALUES.get(tag));
   }
 
   /**
@@ -138,7 +147,7 @@ public class WritableConfig implements Cloneable {
   public WritableConfig clone() {
     try {
       WritableConfig config = (WritableConfig) super.clone();
-      config.map = new HashMap<>(this.map);
+      config.values = new HashMap<>(this.values);
       return config;
     }
     catch (CloneNotSupportedException e) {

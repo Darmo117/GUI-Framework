@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import net.darmo_creations.gui_framework.config.DefaultConfigTags;
 import net.darmo_creations.gui_framework.config.WritableConfig;
 import net.darmo_creations.gui_framework.dao.ConfigDao;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
@@ -42,6 +43,8 @@ public class GuiFramework {
   public static void run(Class<? extends Application> appClass) {
     ApplicationRegistry.registerApplication(appClass);
     Application application = ApplicationRegistry.startApplication();
+
+    WritableConfig.registerTag(DefaultConfigTags.CHECK_UPDATES, application.checkUpdates());
     application.preInit();
 
     WritableConfig config = ConfigDao.getInstance().load();

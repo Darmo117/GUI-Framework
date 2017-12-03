@@ -29,9 +29,5 @@ public final class DefaultConfigTags {
   /** Key to check or not updates */
   public static final BooleanTag CHECK_UPDATES = new BooleanTag("check_updates");
 
-  static {
-    WritableConfig.registerTag(CHECK_UPDATES, true);
-  }
-
   private DefaultConfigTags() {}
 }
