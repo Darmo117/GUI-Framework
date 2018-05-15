@@ -18,31 +18,31 @@ public class AbstractTagTest {
 
   @Test
   public void testEquals() {
-    assertTrue(this.t1.equals(new BooleanTag("b1")));
+    assertEquals(new BooleanTag("b1"), this.t1);
   }
 
   @Test
   public void testNotEqualsDifferentNamesSameTypes() {
-    assertFalse(this.t1.equals(this.t2));
+    assertNotEquals(this.t2, this.t1);
   }
 
   @Test
   public void testNotEqualsSameNamesDifferentTypes() {
-    assertFalse(this.t1.equals(this.t3));
+    assertNotEquals(this.t3, this.t1);
   }
 
   @Test
   public void testHashcodeEquals() {
-    assertTrue(this.t1.hashCode() == new BooleanTag("b1").hashCode());
+    assertEquals(new BooleanTag("b1").hashCode(), this.t1.hashCode());
   }
 
   @Test
   public void testHashcodeNotEqualsDifferentNamesSameTypes() {
-    assertFalse(this.t1.hashCode() == this.t2.hashCode());
+    assertNotEquals(this.t2.hashCode(), this.t1.hashCode());
   }
 
   @Test
   public void testHashcodeNotEqualsSameNamesDifferentTypes() {
-    assertFalse(this.t1.hashCode() == this.t3.hashCode());
+    assertNotEquals(this.t3.hashCode(), this.t1.hashCode());
   }
 }
