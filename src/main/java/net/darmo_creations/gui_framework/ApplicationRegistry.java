@@ -48,11 +48,11 @@ public final class ApplicationRegistry {
    * 
    * @return the registered application
    * @throws IllegalStateException if no application has been registered
-   * @see ApplicationRegistry#registerApplication(Class)
+   * @see ApplicationRegistry#registerApplication(Application)
    */
   public static Application getApplication() {
     if (application == null)
-      throw new IllegalStateException("application not started");
+      throw new IllegalStateException("Application not registered!");
     return application;
   }
 
