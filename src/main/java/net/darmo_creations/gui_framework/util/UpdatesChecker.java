@@ -117,7 +117,7 @@ public final class UpdatesChecker {
       boolean noUpdate = false;
 
       try {
-        URL oracle = new URL(application.getRssUpdatesLink().get());
+        URL oracle = new URL(application.getRssUpdatesLink());
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(oracle.openStream()))) {
           StringJoiner joiner = new StringJoiner("\n");

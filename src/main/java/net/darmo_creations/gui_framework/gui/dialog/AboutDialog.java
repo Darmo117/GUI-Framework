@@ -73,25 +73,23 @@ public class AboutDialog extends AbstractDialog {
     }
     add(leftPnl, BorderLayout.WEST);
 
-    if (application.getAboutFilePath().isPresent()) {
-      JEditorPane textPnl = new JEditorPane();
-      textPnl.setContentType("text/html");
-      textPnl.setEditable(false);
-      textPnl.setPreferredSize(new Dimension(600, 200));
-      textPnl.setDocument(getDocument(textPnl));
-      textPnl.addHyperlinkListener(e -> {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          try {
-            Desktop.getDesktop().browse(new URI(e.getDescription()));
-          }
-          catch (IOException | URISyntaxException ex) {
-            ex.printStackTrace();
-          }
+    JEditorPane textPnl = new JEditorPane();
+    textPnl.setContentType("text/html");
+    textPnl.setEditable(false);
+    textPnl.setPreferredSize(new Dimension(600, 200));
+    textPnl.setDocument(getDocument(textPnl));
+    textPnl.addHyperlinkListener(e -> {
+      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        try {
+          Desktop.getDesktop().browse(new URI(e.getDescription()));
         }
-      });
-      textPnl.setText(getHtml(application.getAboutFilePath().get()));
-      add(new JScrollPane(textPnl), BorderLayout.CENTER);
-    }
+        catch (IOException | URISyntaxException ex) {
+          ex.printStackTrace();
+        }
+      }
+    });
+    textPnl.setText(getHtml(application.getAboutFilePath()));
+    add(new JScrollPane(textPnl), BorderLayout.CENTER);
 
     setActionListener(new DefaultDialogController<>(this));
 

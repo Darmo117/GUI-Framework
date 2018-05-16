@@ -64,7 +64,7 @@ public class ConfigDao {
    * @return the config or null if a fatal error occured
    */
   public WritableConfig load() {
-    WritableConfig config = new WritableConfig();
+    WritableConfig config = new WritableConfig(ApplicationRegistry.getApplication().getDefaultLanguage());
 
     try {
       File fXmlFile = new File(URLDecoder.decode(JarUtil.getJarDir() + "config.xml", "UTF-8"));
@@ -78,7 +78,7 @@ public class ConfigDao {
       if (root != null) {
         Element localeElm = (Element) root.getElementsByTagName("Locale").item(0);
         if (localeElm != null) {
-          Language language = ApplicationRegistry.getLanguageFromCode(localeElm.getTextContent());
+          Language language = ApplicationRegistry.getApplication().getLanguageFromCode(localeElm.getTextContent());
           if (language != null)
             config.setLanguage(language);
         }

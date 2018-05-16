@@ -19,8 +19,6 @@
 package net.darmo_creations.gui_framework;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -30,18 +28,14 @@ import net.darmo_creations.gui_framework.controllers.ApplicationController;
 import net.darmo_creations.gui_framework.gui.ApplicationFrame;
 import net.darmo_creations.utils.version.Version;
 
-public class TestApplication implements Application {
+public class TestApplication extends Application {
   private static final String NAME = "Test App";
   private static final Version VERSION = new Version(1, 0, 0, false);
 
   // "/net/darmo_creations/gui_framework/assets/icons/"
   @Override
   public void preInit() {
-    List<Language> l = new ArrayList<>();
-    l.add(new Language("English", Locale.US));
-    l.add(new Language("Français", Locale.FRANCE));
-
-    ApplicationRegistry.setLanguages(l);
+    setLanguages(new Language("English", Locale.US), new Language("Français", Locale.FRANCE));
   }
 
   @Override
@@ -61,46 +55,35 @@ public class TestApplication implements Application {
 
   @Override
   public InputStream getLanguageFilesStream(Language language) {
-    return TestApplication.class.getResourceAsStream("/net/darmo_creations/gui_framework/assets/langs/" + language.getCode() + ".lang");
+    return getClass().getResourceAsStream("/assets/langs/" + language.getCode() + ".lang");
   }
 
   @Override
-  public boolean checkUpdates() {
-    return true;
-  }
-
-  @Override
-  public Optional<String> getRssUpdatesLink() {
-    return Optional.of("https://github.com/Darmo117/Jenealogio/releases.atom");
-  }
-
-  @Override
-  public boolean hasHelpDocumentation() {
-    return true;
+  public String getRssUpdatesLink() {
+    return "https://github.com/Darmo117/Jenealogio/releases.atom";
   }
 
   @Override
   public Optional<String> getHelpDocumentationLink(Language language) {
-    return Optional.of(String.format("http://darmo-creations.net/jenealogio/help-doc/%s/", language.getCode()));
+    return Optional.of(String.format("http://darmo-creations.net/products/jenealogio/help-doc/%s/", language.getCode()));
   }
 
   @Override
-  public boolean hasAboutDialog() {
-    return true;
-  }
-
-  @Override
-  public Optional<String> getAboutFilePath() {
-    return Optional.of("/net/darmo_creations/gui_framework/assets/about.html");
+  public String getAboutFilePath() {
+    return "/assets/about.html";
   }
 
   @Override
   public Optional<String> getIcon() {
-    return Optional.of("/net/darmo_creations/gui_framework/assets/icons/jenealogio_icon.png");
+    return Optional.of("/assets/icons/jenealogio_icon.png");
   }
 
   @Override
   public Optional<String> getLicenseIcon() {
-    return Optional.of("/net/darmo_creations/gui_framework/assets/icons/gplv3-127x51.png");
+    return Optional.of("/assets/icons/gplv3-127x51.png");
+  }
+
+  public static void main(String[] args) {
+    launch(TestApplication.class, args);
   }
 }

@@ -18,16 +18,12 @@
  */
 package net.darmo_creations.gui_framework;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
-import net.darmo_creations.gui_framework.config.Language;
 import net.darmo_creations.utils.events.EventsBus;
 
 /**
- * An application must register itself to this registry to be started. Only one application can be
+ * Applications must register itself to this registry to be started. Only one application can be
  * registered.
  *
  * @author Damien Vergnet
@@ -36,32 +32,15 @@ public final class ApplicationRegistry {
   /** Application's main event bus */
   public static final EventsBus EVENTS_BUS = new EventsBus();
 
-  private static Class<? extends Application> applicationClass;
   private static Application application;
 
   /**
-   * Registers the application. The registered application must have a visible constructor with no
-   * arguments.
-   * 
-   * @param applicationClass the application's class
+   * Registers the application. This method can be called only once.
    */
-  static void registerApplication(Class<? extends Application> applicationClass) {
-    ApplicationRegistry.applicationClass = Objects.requireNonNull(applicationClass);
-  }
-
-  /**
-   * Starts the application and returns the instance.
-   */
-  static Application startApplication() {
-    if (applicationClass == null)
-      throw new IllegalStateException("no application class registered");
-    try {
-      application = applicationClass.newInstance();
-      return application;
-    }
-    catch (InstantiationException | IllegalAccessException ex) {
-      throw new RuntimeException(ex);
-    }
+  static void registerApplication(Application app) {
+    if (application != null)
+      throw new IllegalStateException("Application already regitered!");
+    application = Objects.requireNonNull(app);
   }
 
   /**
@@ -75,65 +54,6 @@ public final class ApplicationRegistry {
     if (application == null)
       throw new IllegalStateException("application not started");
     return application;
-  }
-
-  /** List of available languages */
-  private static List<Language> languages;
-  private static Language defaultLanguage;
-
-  /**
-   * Intializes the available languages. They will appear in the menu in the same order as they are
-   * in the list. The first language in the list will be the default if the config could not be
-   * loaded.
-   * 
-   * @param langs the languages
-   * @throws IllegalArgumentException if the list is empty
-   */
-  public static void setLanguages(Language... langs) {
-    setLanguages(Arrays.asList(langs));
-  }
-
-  /**
-   * Intializes the available languages. They will appear in the menu in the same order as they are
-   * in the list. The first language in the list will be the default if the config could not be
-   * loaded.
-   * 
-   * @param langs the languages
-   * @throws IllegalArgumentException if the list is empty
-   */
-  public static void setLanguages(List<Language> langs) {
-    languages = new ArrayList<>(langs);
-    if (languages.isEmpty())
-      throw new IllegalArgumentException("empty languages list");
-    defaultLanguage = languages.get(0);
-  }
-
-  /**
-   * @return all available languages
-   */
-  public static Language[] getLanguages() {
-    return languages.stream().toArray(Language[]::new);
-  }
-
-  /**
-   * @return the default language
-   */
-  public static Language getDefaultLanguage() {
-    return defaultLanguage;
-  }
-
-  /**
-   * Returns the language matching the code.
-   * 
-   * @param code language code
-   * @return the matching value
-   */
-  public static Language getLanguageFromCode(String code) {
-    for (Language l : languages) {
-      if (l.getCode().equals(code))
-        return l;
-    }
-    return null;
   }
 
   private ApplicationRegistry() {}

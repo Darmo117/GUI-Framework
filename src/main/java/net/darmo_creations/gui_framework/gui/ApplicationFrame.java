@@ -197,12 +197,12 @@ public abstract class ApplicationFrame<T extends ApplicationController<?>> exten
       this.checkUpdatesItem.addActionListener(listeners.get(UserEvent.DefaultType.TOGGLE_CHECK_UPDATES));
     }
 
-    if (ApplicationRegistry.getLanguages().length > 1) {
+    if (ApplicationRegistry.getApplication().getLanguages().length > 1) {
       JMenu langMenu = new JMenu(I18n.getLocalizedString("menu.lang.text"));
       langMenu.setMnemonic(I18n.getLocalizedMnemonic("menu.lang"));
       this.optionsMenu.add(langMenu);
       ButtonGroup bg = new ButtonGroup();
-      for (Language l : ApplicationRegistry.getLanguages()) {
+      for (Language l : ApplicationRegistry.getApplication().getLanguages()) {
         langMenu.add(i = new JRadioButtonMenuItem(l.getName()));
         i.setSelected(l == config.getLanguage());
         i.setIcon(ImagesUtil.getIcon(Application.ICONS_LOCATION + "flag-" + l.getCode() + ".png"));

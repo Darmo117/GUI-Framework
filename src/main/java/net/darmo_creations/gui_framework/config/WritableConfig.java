@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import net.darmo_creations.gui_framework.ApplicationRegistry;
 import net.darmo_creations.gui_framework.config.tags.AbstractTag;
 
 /**
@@ -75,9 +74,11 @@ public class WritableConfig implements Cloneable {
 
   /**
    * Creates a config with default values for all properties.
+   * 
+   * @param defaultLanguage the default language
    */
-  public WritableConfig() {
-    setLanguage(ApplicationRegistry.getDefaultLanguage());
+  public WritableConfig(Language defaultLanguage) {
+    setLanguage(defaultLanguage);
     this.values = new HashMap<>(DEFAULT_VALUES);
   }
 

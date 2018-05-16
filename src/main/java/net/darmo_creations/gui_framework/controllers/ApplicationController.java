@@ -164,8 +164,9 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
     try {
       Application application = ApplicationRegistry.getApplication();
       Optional<String> link = application.getHelpDocumentationLink(this.config.getLanguage());
-      if (link.isPresent())
+      if (link.isPresent()) {
         Desktop.getDesktop().browse(new URI(link.get()));
+      }
     }
     catch (IOException | URISyntaxException ex) {}
   }
