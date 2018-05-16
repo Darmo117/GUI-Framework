@@ -84,6 +84,6 @@ public class TestApplication extends Application {
   }
 
   public static void main(String[] args) {
-    launch(TestApplication.class, args);
+    launch(args);
   }
 }

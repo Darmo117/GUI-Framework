@@ -46,12 +46,13 @@ public abstract class Application {
   private static boolean launched = false;
 
   /**
-   * Launches a standalone application. This method is typically called from the main method. It
-   * must not be called more than once or an exception will be thrown.
+   * Launches a standalone application. This method is typically called from the main() method. It
+   * must not be called more than once or an exception will be thrown. The caller must be a subclass
+   * of Application or a RuntimeException will be thrown.
    *
    * <p>
-   * The launch method does not return until the application has exited, either via a call to
-   * System.exit or all of the application windows have been closed.
+   * The launch method does not return until the application has exited, when all of the application
+   * windows have been closed.
    * </p>
    *
    * <p>
@@ -59,29 +60,62 @@ public abstract class Application {
    * 
    * <pre>
    * public static void main(String[] args) {
-   *   Application.launch(MyApp.class, args);
+   *   Application.launch(args);
    * }
    * </pre>
-   * 
-   * where {@code MyApp} is a subclass of Application.
-   * </p>
    *
-   * @param applicationClass the application class that is constructed and executed by the launcher
-   * @param args the command line arguments passed to the application
+   * @param args the command line arguments passed to the application. An application may get these
+   *          parameters using the {@link #getParameters()} method
    *
    * @throws IllegalStateException if this method is called more than once
    */
-  public static void launch(Class<? extends Application> applicationClass, String... args) {
+  protected static void launch(String... args) {
     if (launched)
       throw new IllegalStateException("Application already launched!");
 
-    Application application;
-    try {
-      application = applicationClass.newInstance();
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    boolean foundThisMethod = false;
+    String callingClassName = null;
+
+    // Skip entries until we get to the entry for this class
+    for (StackTraceElement se : stackTrace) {
+      String className = se.getClassName();
+      String methodName = se.getMethodName();
+
+      if (foundThisMethod) {
+        callingClassName = className;
+        break;
+      }
+      else if (Application.class.getName().equals(className) && "launch".equals(methodName)) {
+        foundThisMethod = true;
+      }
     }
-    catch (InstantiationException | IllegalAccessException ex) {
+
+    if (callingClassName == null) {
+      throw new RuntimeException("Unable to determine Application class!");
+    }
+
+    try {
+      Class<?> theClass = Class.forName(callingClassName, true, Thread.currentThread().getContextClassLoader());
+      if (Application.class.isAssignableFrom(theClass)) {
+        @SuppressWarnings("unchecked")
+        Class<? extends Application> appClass = (Class<? extends Application>) theClass;
+        launchApplication(appClass.newInstance(), args);
+      }
+      else {
+        throw new RuntimeException(theClass + " is not a subclass of net._darmo_creations.gui_framework.Application!");
+      }
+    }
+    catch (RuntimeException ex) {
+      throw ex;
+    }
+    catch (Exception ex) {
       throw new RuntimeException(ex);
     }
+  }
+
+  private static void launchApplication(Application application, String[] args) {
+    application.setParameters(args);
     ApplicationRegistry.registerApplication(application);
 
     WritableConfig.registerTag(DefaultConfigTags.CHECK_UPDATES, application.checkUpdates());
@@ -123,11 +157,23 @@ public abstract class Application {
     }
   }
 
+  private String[] parameters;
   /** List of available languages */
   private Language[] languages;
   private Language defaultLanguage;
 
   protected Application() {}
+
+  /**
+   * Returns command-line parameters.
+   */
+  public String[] getParameters() {
+    return Arrays.copyOf(this.parameters, this.parameters.length);
+  }
+
+  private void setParameters(String[] parameters) {
+    this.parameters = parameters;
+  }
 
   /**
    * This method is called before any other from this class. Languages should be registered in this
