@@ -123,7 +123,7 @@ public class ConfigDao {
 
       Element nodes = doc.createElement("Values");
       for (AbstractTag<?> key : WritableConfig.getRegisteredTags()) {
-        if (config.isModified(key)) {
+        if (config.isNotDefault(key)) {
           Element node = doc.createElement("Value");
           node.setAttribute("name", key.getName());
           node.setAttribute("class", key.getValueClass().getName());
