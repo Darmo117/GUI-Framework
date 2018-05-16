@@ -24,8 +24,8 @@ task createZip(type: Zip) {
   from '/'
   include 'LICENSE'
   from 'build/libs/'
-  include 'GUI-Framework-' + version + '.jar'
-  archiveName 'GUI-Framework-' + version + '.zip'
+  include rootProject.name + '-' + version + '.jar'
+  archiveName rootProject.name + '-' + version + '.zip'
   destinationDir(file('/'))
 }
 
