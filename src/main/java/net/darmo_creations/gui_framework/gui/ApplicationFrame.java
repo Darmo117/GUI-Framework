@@ -163,12 +163,16 @@ public abstract class ApplicationFrame<T extends ApplicationController<?>> exten
   /**
    * Called before the frame is initialized.
    * 
+   * @param config config object
    * @return the application's controller
    */
   protected abstract T preInit(WritableConfig config);
 
   /**
    * The frame's content must be initialized in this method.
+   * 
+   * @param controller this frames' controller
+   * @param config config object
    */
   protected abstract void initContent(T controller, WritableConfig config);
 

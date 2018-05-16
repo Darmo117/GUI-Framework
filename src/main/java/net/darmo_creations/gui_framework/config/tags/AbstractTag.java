@@ -35,6 +35,7 @@ public abstract class AbstractTag<T> {
    * Creates a key with the given name.
    * 
    * @param name the name
+   * @param valueClass tag values' class
    */
   public AbstractTag(String name, Class<T> valueClass) {
     this.name = Objects.requireNonNull(name);

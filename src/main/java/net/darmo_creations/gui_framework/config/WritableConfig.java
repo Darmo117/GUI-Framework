@@ -55,22 +55,15 @@ public class WritableConfig implements Cloneable {
 
   /**
    * Returns the tag corresponding to the given name and class name.
-   * 
-   * @param name the name
-   * @param type the class name
-   * @return
    */
   @SuppressWarnings("unchecked")
-  public static <T extends AbstractTag<?>> Optional<T> getTagFromName(String name, String type) {
+  public static <T extends AbstractTag<?>> Optional<T> getTagFromName(String name, String className) {
     return (Optional<T>) DEFAULT_VALUES.keySet().stream().filter(
-        k -> k.getName().equals(name) && k.getValueClass().getName().equals(type)).findFirst();
+        k -> k.getName().equals(name) && k.getValueClass().getName().equals(className)).findFirst();
   }
 
   /**
    * Returns the default value for the given tag.
-   * 
-   * @param tag
-   * @return
    */
   @SuppressWarnings("unchecked")
   public static <T> T getDefaultValue(AbstractTag<T> tag) {

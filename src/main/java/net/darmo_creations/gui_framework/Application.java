@@ -49,12 +49,12 @@ public interface Application {
   ApplicationFrame<?> initFrame(WritableConfig config);
 
   /**
-   * Returns the application's name
+   * Returns the application's name.
    */
   String getName();
 
   /**
-   * Returns the application's current version
+   * Returns the application's current version.
    */
   Version getCurrentVersion();
 

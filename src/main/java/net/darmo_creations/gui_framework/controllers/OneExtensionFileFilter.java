@@ -28,7 +28,7 @@ public class OneExtensionFileFilter extends ExtensionsFileFilter {
    * Creates a file filter.
    * 
    * @param fileType the description of the file type.
-   * @param extensions the extension without the '.'
+   * @param extension the extension without the '.'
    */
   public OneExtensionFileFilter(String fileType, String extension) {
     super(fileType, extension);
