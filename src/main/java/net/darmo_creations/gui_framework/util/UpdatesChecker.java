@@ -107,7 +107,7 @@ public final class UpdatesChecker {
     UpdateEvent.Checking event = new UpdateEvent.Checking();
     bus.dispatchEvent(event);
 
-    if (event.isCanceled()) {
+    if (event.isCancelled()) {
       return;
     }
 
@@ -143,8 +143,8 @@ public final class UpdatesChecker {
                   try {
                     Node link = entry.getElementsByTagName("link").item(0);
                     Node content = entry.getElementsByTagName("content").item(0);
-                    String[] data = new String[]{"http://github.com" + link.getAttributes().getNamedItem("href").getNodeValue(),
-                      content.getTextContent()};
+                    String[] data = new String[] { "http://github.com" + link.getAttributes().getNamedItem("href").getNodeValue(),
+                      content.getTextContent() };
                     versions.put(Version.fromString(m.group(1)), data);
                   }
                   catch (ParseException __) {}

@@ -35,6 +35,7 @@ public class ChangeLanguageEvent extends AbstractEvent {
    * @param language the desired language
    */
   public ChangeLanguageEvent(Language language) {
+    super(true);
     this.language = language;
   }
 

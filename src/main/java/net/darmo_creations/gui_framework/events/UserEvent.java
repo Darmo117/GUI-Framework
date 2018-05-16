@@ -34,6 +34,7 @@ public final class UserEvent extends AbstractEvent {
    * @param type the type
    */
   public UserEvent(Type type) {
+    super(true);
     this.type = type;
   }
 

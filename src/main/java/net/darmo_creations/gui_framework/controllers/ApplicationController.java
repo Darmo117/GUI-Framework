@@ -85,7 +85,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
   @SuppressWarnings("incomplete-switch")
   @SubscribeEvent
   public void onUserEvent(UserEvent e) {
-    if (e.isCanceled()) {
+    if (e.isCancelled()) {
       return;
     }
 
@@ -100,7 +100,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
           break;
         case EXITING:
           if (!exit())
-            e.setCanceled();
+            e.setCancelled();
           break;
         case OPEN_UPDATE:
           openUpdate();
@@ -137,7 +137,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
   public void onUpdateChecking(UpdateEvent.Checking e) {
     if (!this.checkUpdatesEnabled || !this.config.getValue(DefaultConfigTags.CHECK_UPDATES)) {
       this.frame.setUpdateLabelText(ApplicationFrame.UPDATES_BLOCKED, null);
-      e.setCanceled();
+      e.setCancelled();
     }
   }
 
@@ -201,7 +201,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
     UserEvent event = new UserEvent(UserEvent.DefaultType.EXIT);
     ApplicationRegistry.EVENTS_BUS.dispatchEvent(event);
 
-    if (!event.isCanceled()) {
+    if (!event.isCancelled()) {
       ConfigDao.getInstance().save(this.config);
       this.frame.dispose();
       return true;
@@ -216,7 +216,7 @@ public class ApplicationController<T extends ApplicationFrame<?>> {
     UserEvent event = new UserEvent(UserEvent.DefaultType.EXITING);
     ApplicationRegistry.EVENTS_BUS.dispatchEvent(event);
 
-    if (!event.isCanceled()) {
+    if (!event.isCancelled()) {
       JarUtil.restartApplication(".jar");
     }
   }

@@ -27,9 +27,8 @@ import net.darmo_creations.utils.version.Version;
  * @author Damien Vergnet
  */
 public abstract class UpdateEvent extends AbstractEvent {
-  @Override
-  public boolean isCancelable() {
-    return false;
+  protected UpdateEvent(boolean cancellable) {
+    super(cancellable);
   }
 
   /**
@@ -39,9 +38,8 @@ public abstract class UpdateEvent extends AbstractEvent {
    * @author Damien Vergnet
    */
   public static class Checking extends UpdateEvent {
-    @Override
-    public boolean isCancelable() {
-      return true;
+    public Checking() {
+      super(true);
     }
   }
 
@@ -62,6 +60,7 @@ public abstract class UpdateEvent extends AbstractEvent {
      * @param changelog the html changelog
      */
     public NewUpdate(Version version, String link, String changelog) {
+      super(false);
       this.version = version;
       this.link = link;
       this.changelog = changelog;
@@ -85,7 +84,11 @@ public abstract class UpdateEvent extends AbstractEvent {
    *
    * @author Damien Vergnet
    */
-  public static class NoUpdate extends UpdateEvent {}
+  public static class NoUpdate extends UpdateEvent {
+    public NoUpdate() {
+      super(false);
+    }
+  }
 
   /**
    * This event is fired when update checking failed.
@@ -101,6 +104,7 @@ public abstract class UpdateEvent extends AbstractEvent {
      * @param reason the reason why update checking failed
      */
     public CheckFailed(String reason) {
+      super(false);
       this.reason = reason;
     }
 
